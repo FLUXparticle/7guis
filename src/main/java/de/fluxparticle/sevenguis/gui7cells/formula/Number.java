@@ -1,5 +1,9 @@
 package de.fluxparticle.sevenguis.gui7cells.formula;
 
+import java.util.List;
+
+import static java.util.Collections.emptyList;
+
 /**
  * Created by sreinck on 24.02.16.
  */
@@ -17,6 +21,11 @@ public class Number extends Formula {
 
     public double eval(Model env) {
         return value;
+    }
+
+    @Override
+    public List<Cell> getReferences(Model env) {
+        return emptyList();
     }
 
 }

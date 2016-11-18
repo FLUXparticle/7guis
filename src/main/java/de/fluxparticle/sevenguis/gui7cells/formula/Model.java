@@ -11,8 +11,8 @@ public class Model {
         cells = new Cell[height][width];
         for (int r = 0; r < height; r++) {
             for (int c = 0; c < width; c++) {
-                Coord coord = new Coord(r, c);
-                cells[r][c] = new Cell(coord, this);
+                Reference reference = new Reference(r, c);
+                cells[r][c] = new Cell(reference, this);
             }
         }
     }

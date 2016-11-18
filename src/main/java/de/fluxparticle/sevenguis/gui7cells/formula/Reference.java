@@ -6,13 +6,18 @@ import java.util.List;
 /**
  * Created by sreinck on 24.02.16.
  */
-public class Coord extends Formula {
+public class Reference extends Formula {
 
-    final int row;
+    private final int row;
 
-    final int column;
+    private final int column;
 
-    public Coord(int row, int column) {
+    public Reference(String name) {
+        row = Integer.parseInt(name.substring(1))-1;
+        column = name.charAt(0) - 'A';
+    }
+
+    public Reference(int row, int column) {
         this.row = row;
         this.column = column;
     }

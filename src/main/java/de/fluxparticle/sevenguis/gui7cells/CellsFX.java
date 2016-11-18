@@ -3,8 +3,6 @@ package de.fluxparticle.sevenguis.gui7cells;
 import de.fluxparticle.sevenguis.gui7cells.formula.Cell;
 import de.fluxparticle.sevenguis.gui7cells.formula.Formula;
 import de.fluxparticle.sevenguis.gui7cells.formula.Model;
-import de.fluxparticle.sevenguis.gui7cells.formula.Textual;
-import de.fluxparticle.sevenguis.gui7cells.parser.Parser;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -79,9 +77,9 @@ public class CellsFX extends Application {
 
                 Formula formula;
                 try {
-                    formula = Parser.parse(o.toString());
+                    formula = null; // Parser.parse(o.toString());
                 } catch (Exception e) {
-                    formula = new Textual(e.getMessage());
+                    formula = null; // new Textual(e.getMessage());
                 }
                 return new CellInfo(formula, "");
             }

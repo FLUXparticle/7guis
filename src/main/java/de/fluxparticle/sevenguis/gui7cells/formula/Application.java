@@ -45,11 +45,14 @@ public class Application extends Formula {
     private static List<Double> evalList(List<Formula> args, Model env) {
         List<Double> result = new ArrayList<>();
         for (Formula f : args) {
+/*
             if (f instanceof Range) {
                 for (Cell c : f.getReferences(env)) {
                     result.add(c.getValue());
                 }
-            } else {
+            } else
+*/
+                {
                 result.add(f.eval(env));
             }
         }

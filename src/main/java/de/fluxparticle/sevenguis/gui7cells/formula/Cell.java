@@ -11,26 +11,28 @@ import java.util.Observer;
  */
 public class Cell extends Observable implements Observer {
 
-    private final Coord coord;
+    private final Reference reference;
 
     private final StringProperty text = new SimpleStringProperty();
 
     private final Model model;
 
-    private Formula formula = Formula.EMPTY;
+    private Formula formula = null;
 
     private double value = 0;
 
-    public Cell(Coord coord, Model model) {
-        this.coord = coord;
+    public Cell(Reference reference, Model model) {
+        this.reference = reference;
         this.model = model;
     }
 
     public String toString() {
+/*
         if (formula instanceof Textual) {
             Textual textual = (Textual) formula;
             return textual.value;
         }
+*/
         return String.valueOf(value);
     }
 
@@ -52,13 +54,13 @@ public class Cell extends Observable implements Observer {
 
     @Override
     public synchronized void addObserver(Observer o) {
-        System.out.printf("add %s -> %s%n", this.coord, ((Cell) o).coord);
+        System.out.printf("add %s -> %s%n", this.reference, ((Cell) o).reference);
         super.addObserver(o);
     }
 
     @Override
     public synchronized void deleteObserver(Observer o) {
-        System.out.printf("del %s -> %s%n", this.coord, ((Cell) o).coord);
+        System.out.printf("del %s -> %s%n", this.reference, ((Cell) o).reference);
         super.deleteObserver(o);
     }
 
