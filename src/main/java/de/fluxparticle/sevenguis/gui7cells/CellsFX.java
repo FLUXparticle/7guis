@@ -1,6 +1,7 @@
 package de.fluxparticle.sevenguis.gui7cells;
 
 import de.fluxparticle.sevenguis.gui7cells.cell.Cell;
+import de.fluxparticle.sevenguis.gui7cells.cell.CellFX;
 import de.fluxparticle.sevenguis.gui7cells.formula.Content;
 import de.fluxparticle.sevenguis.gui7cells.formula.FormulaSyntax;
 import de.fluxparticle.sevenguis.gui7cells.formula.Model;
@@ -77,9 +78,11 @@ public class CellsFX extends Application {
 
     private static final int COLS = 26;
 
-    private Model model = new Model(ROWS, COLS);
+    private Model model;
 
     public void start(Stage stage) {
+        model = new Model(ROWS, COLS, () -> new CellFX(model));
+
         GridBase grid = new GridBase(ROWS, COLS);
 
         ObservableList<ObservableList<SpreadsheetCell>> rows = IntStream.range(0, grid.getRowCount())
