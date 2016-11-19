@@ -11,70 +11,58 @@ import java.util.Observer;
  */
 public class Cell extends Observable implements Observer {
 
-    private final Reference reference;
+    private final Model model;
 
     private final StringProperty text = new SimpleStringProperty();
 
-    private final Model model;
+    private Content content = Text.EMPTY;
 
-    private Formula formula = null;
+    private Object value = 0.0;
 
-    private double value = 0;
-
-    public Cell(Reference reference, Model model) {
-        this.reference = reference;
+    public Cell(Model model) {
         this.model = model;
     }
 
     public String toString() {
-/*
-        if (formula instanceof Textual) {
-            Textual textual = (Textual) formula;
-            return textual.value;
-        }
-*/
         return String.valueOf(value);
     }
 
-    public Formula getFormula() {
-        return formula;
+    public Content getContent() {
+        return content;
     }
 
-    public void setFormula(Formula formula) {
-        for (Cell cell : this.formula.getReferences(model)) {
+    public void setContent(Content content) {
+        for (Cell cell : this.content.getReferences(model)) {
             cell.deleteObserver(this);
         }
-        this.formula = formula;
-        for (Cell cell : this.formula.getReferences(model)) {
+        this.content = content;
+        for (Cell cell : this.content.getReferences(model)) {
             cell.addObserver(this);
         }
         update(null, null);
-        updateText();
     }
 
     @Override
     public synchronized void addObserver(Observer o) {
-        System.out.printf("add %s -> %s%n", this.reference, ((Cell) o).reference);
         super.addObserver(o);
     }
 
     @Override
     public synchronized void deleteObserver(Observer o) {
-        System.out.printf("del %s -> %s%n", this.reference, ((Cell) o).reference);
         super.deleteObserver(o);
     }
 
-    public double getValue() {
+    public Object getValue() {
         return value;
     }
 
-    private void setValue(double value) {
-        if (!(this.value == value || Double.isNaN(this.value) && Double.isNaN(value))) {
+    private void setValue(Object value) {
+        if (this.value != value) {
             this.value = value;
-            updateText();
             setChanged();
             notifyObservers();
         }
+        updateText();
     }
 
     private void updateText() {
@@ -84,12 +72,23 @@ public class Cell extends Observable implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        double value = formula.eval(model);
+        Object value;
+
+        try {
+            value = content.eval(model);
+        } catch (Exception e) {
+            value = "Error!";
+        }
+
         setValue(value);
     }
 
     public StringProperty textProperty() {
         return text;
+    }
+
+    public void setText(String text) {
+        this.text.set(text);
     }
 
 }

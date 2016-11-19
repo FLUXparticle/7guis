@@ -74,7 +74,7 @@ public enum FormulaSyntax implements Rule {
     private static Object reduceExpression(Object[] objects) {
         Expression left = (Expression) objects[0];
         return Optional.ofNullable((List) objects[1])
-                .map(l -> (Formula) new Operation(left, fromString(l.get(0).toString()), (Expression) l.get(1)))
+                .map(l -> (Content) new Operation(left, fromString(l.get(0).toString()), (Expression) l.get(1)))
                 .orElseGet(() -> new Expression(left));
     }
 

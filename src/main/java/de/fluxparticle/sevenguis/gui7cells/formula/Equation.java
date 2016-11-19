@@ -14,7 +14,7 @@ public class Equation extends Formula {
     }
 
     @Override
-    public double eval(Model env) {
+    public Object eval(Model env) {
         return expression.eval(env);
     }
 

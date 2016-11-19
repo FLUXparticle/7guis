@@ -60,13 +60,13 @@ public class FormulaSyntaxTest {
     }
 
     private static void testParse(String input) throws ParserException {
-        Formula check = parseFormula(input);
+        Content check = parseFormula(input);
         assertEquals(input, check.toString());
     }
 
     private static void testCalc(String input, double expected) throws ParserException {
         Formula check = parseFormula(input);
-        double actual = check.eval(null);
+        double actual = (double) check.eval(null);
         assertEquals(expected, actual, 0.0);
     }
 

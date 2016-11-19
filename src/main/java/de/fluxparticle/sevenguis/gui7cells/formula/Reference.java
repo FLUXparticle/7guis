@@ -1,7 +1,8 @@
 package de.fluxparticle.sevenguis.gui7cells.formula;
 
-import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 /**
  * Created by sreinck on 24.02.16.
@@ -26,12 +27,12 @@ public class Reference extends Formula {
         return Character.toString((char) ('A' + column)) + (row + 1);
     }
 
-    public double eval(Model env) {
+    public Object eval(Model env) {
         return env.getCell(row, column).getValue();
     }
 
     public List<Cell> getReferences(Model env) {
-        return Collections.singletonList(env.getCell(row, column));
+        return singletonList(env.getCell(row, column));
     }
 
 }

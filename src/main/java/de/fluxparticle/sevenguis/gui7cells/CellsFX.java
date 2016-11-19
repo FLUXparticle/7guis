@@ -1,8 +1,9 @@
 package de.fluxparticle.sevenguis.gui7cells;
 
-import de.fluxparticle.sevenguis.gui7cells.formula.Cell;
-import de.fluxparticle.sevenguis.gui7cells.formula.Formula;
-import de.fluxparticle.sevenguis.gui7cells.formula.Model;
+import de.fluxparticle.sevenguis.gui7cells.formula.*;
+import de.fluxparticle.syntax.config.EnumSyntaxConfig;
+import de.fluxparticle.syntax.parser.Lexer;
+import de.fluxparticle.syntax.parser.Parser;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,11 +11,61 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.controlsfx.control.spreadsheet.*;
 
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.stream.IntStream;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toCollection;
 
 public class CellsFX extends Application {
+
+    private static final EnumSyntaxConfig<FormulaSyntax> CONFIG = new EnumSyntaxConfig<>(FormulaSyntax.class);
+
+    private static final Parser PARSER = CONFIG.getParser(FormulaSyntax.FORMULA);
+
+    private static final SpreadsheetCellType<CellInfo> CELL_TYPE = new SpreadsheetCellType<CellInfo>() {
+
+        @Override
+        public SpreadsheetCellEditor createEditor(SpreadsheetView view) {
+            return new SpreadsheetCellEditor.StringEditor(view) {
+                @Override
+                public void startEdit(Object value) {
+                    CellInfo info = (CellInfo) value;
+                    String str = info.getContent().toString();
+                    super.startEdit(str);
+                }
+            };
+        }
+
+        @Override
+        public String toString(CellInfo info) {
+            return info.getText();
+        }
+
+        @Override
+        public boolean match(Object o) {
+            return true;
+        }
+
+        @Override
+        public CellInfo convertValue(Object o) {
+            if (o instanceof CellInfo) {
+                return (CellInfo) o;
+            }
+
+            String input = ofNullable((String) o).orElse("");
+            Content content;
+            try {
+                Reader reader = new StringReader(input);
+                Lexer lexer = CONFIG.newLexer(reader);
+                content = (Content) PARSER.check(lexer);
+            } catch (Exception e) {
+                content = new Text(input);
+            }
+            return new CellInfo(content, input);
+        }
+    };
 
     private static final int ROWS = 100;
 
@@ -44,61 +95,21 @@ public class CellsFX extends Application {
     }
 
     private static SpreadsheetCell createCell(int row, int col, Cell cell) {
-        SpreadsheetCellType<CellInfo> cellType = new SpreadsheetCellType<CellInfo>() {
+        SpreadsheetCellBase cellBase = new SpreadsheetCellBase(row, col, 1, 1, CELL_TYPE);
 
-            @Override
-            public SpreadsheetCellEditor createEditor(SpreadsheetView view) {
-                return new SpreadsheetCellEditor.StringEditor(view) {
-                    @Override
-                    public void startEdit(Object value) {
-                        CellInfo info = (CellInfo) value;
-                        // TODO toString() muss wirklich genau die Formel wiederherstellen
-                        String str = info.getFormula().toString();
-                        super.startEdit(str);
-                    }
-                };
-            }
-
-            @Override
-            public String toString(CellInfo info) {
-                return info.getText();
-            }
-
-            @Override
-            public boolean match(Object o) {
-                return true;
-            }
-
-            @Override
-            public CellInfo convertValue(Object o) {
-                if (o instanceof CellInfo) {
-                    return (CellInfo) o;
-                }
-
-                Formula formula;
-                try {
-                    formula = null; // Parser.parse(o.toString());
-                } catch (Exception e) {
-                    formula = null; // new Textual(e.getMessage());
-                }
-                return new CellInfo(formula, "");
-            }
-        };
-
-        SpreadsheetCellBase cellBase = new SpreadsheetCellBase(row, col, 1, 1, cellType);
-
-        cellBase.setItem(new CellInfo(cell.getFormula(), ""));
+        cellBase.setItem(new CellInfo(cell.getContent(), ""));
         cellBase.itemProperty().addListener((observable, oldValue, newValue) -> {
             CellInfo info = (CellInfo) newValue;
-            Formula oldFormula = cell.getFormula();
-            Formula newFormula = info.getFormula();
-            if (newFormula != oldFormula) {
-                cell.setFormula(newFormula);
+            Content oldContent = cell.getContent();
+            Content newContent = info.getContent();
+            if (newContent != oldContent) {
+                cell.setText(info.getText());
+                cell.setContent(newContent);
             }
         });
         cell.textProperty().addListener((observable, oldValue, newValue) -> {
             CellInfo info = (CellInfo) cellBase.getItem();
-            cellBase.setItem(new CellInfo(info.getFormula(), newValue));
+            cellBase.setItem(new CellInfo(info.getContent(), newValue));
         });
 
         return cellBase;

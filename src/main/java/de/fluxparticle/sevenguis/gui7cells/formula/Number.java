@@ -19,7 +19,7 @@ public class Number extends Formula {
         return String.valueOf(value);
     }
 
-    public double eval(Model env) {
+    public Object eval(Model env) {
         return value;
     }
 

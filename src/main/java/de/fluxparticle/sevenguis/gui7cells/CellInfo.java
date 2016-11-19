@@ -1,23 +1,23 @@
 package de.fluxparticle.sevenguis.gui7cells;
 
-import de.fluxparticle.sevenguis.gui7cells.formula.Formula;
+import de.fluxparticle.sevenguis.gui7cells.formula.Content;
 
 /**
  * Created by sreinck on 16.10.16.
  */
 public class CellInfo {
 
-    private final Formula formula;
+    private final Content content;
 
     private final String text;
 
-    public CellInfo(Formula formula, String text) {
-        this.formula = formula;
+    public CellInfo(Content content, String text) {
+        this.content = content;
         this.text = text;
     }
 
-    public Formula getFormula() {
-        return formula;
+    public Content getContent() {
+        return content;
     }
 
     public String getText() {

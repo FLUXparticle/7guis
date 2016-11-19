@@ -1,13 +1,10 @@
 package de.fluxparticle.sevenguis.gui7cells.formula;
 
-import java.util.List;
+/**
+ * Created by sreinck on 19.11.16.
+ */
+public abstract class Formula extends Content {
 
-public abstract class Formula {
-
-    public abstract double eval(Model env);
-
-    public abstract List<Cell> getReferences(Model env);
-
-    public abstract String toString();
+    public abstract Object eval(Model env);
 
 }

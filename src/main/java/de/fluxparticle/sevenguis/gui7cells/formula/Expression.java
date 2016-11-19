@@ -17,14 +17,14 @@ public class Expression extends Formula {
         return info;
     }
 
-    public double evalExpression(double leftValue, Model env) {
-        return leftValue;
+    public Object evalExpression(Object leftObject, Model env) {
+        return leftObject;
     }
 
     @Override
-    public final double eval(Model env) {
-        double leftValue = info.eval(env);
-        return evalExpression(leftValue, env);
+    public final Object eval(Model env) {
+        Object leftObject = info.eval(env);
+        return evalExpression(leftObject, env);
     }
 
     @Override

@@ -12,7 +12,7 @@ public class Model {
         for (int r = 0; r < height; r++) {
             for (int c = 0; c < width; c++) {
                 Reference reference = new Reference(r, c);
-                cells[r][c] = new Cell(reference, this);
+                cells[r][c] = new Cell(this);
             }
         }
     }

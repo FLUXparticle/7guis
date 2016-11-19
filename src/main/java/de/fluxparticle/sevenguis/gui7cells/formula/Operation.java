@@ -1,5 +1,10 @@
 package de.fluxparticle.sevenguis.gui7cells.formula;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Stream.concat;
+
 /**
  * Created by sreinck on 18.11.16.
  */
@@ -16,8 +21,9 @@ public class Operation extends Expression {
     }
 
     @Override
-    public double evalExpression(double leftValue, Model env) {
-        double rightValue = tail.getInfo().eval(env);
+    public Object evalExpression(Object leftObject, Model env) {
+        double leftValue = (double) leftObject;
+        double rightValue = (double) tail.getInfo().eval(env);
 
         double value;
         switch (operator) {
@@ -41,6 +47,13 @@ public class Operation extends Expression {
         }
 
         return tail.evalExpression(value, env);
+    }
+
+    @Override
+    public List<Cell> getReferences(Model env) {
+        List<Cell> left = super.getReferences(env);
+        List<Cell> right = tail.getReferences(env);
+        return concat(left.stream(), right.stream()).collect(toList());
     }
 
     @Override
