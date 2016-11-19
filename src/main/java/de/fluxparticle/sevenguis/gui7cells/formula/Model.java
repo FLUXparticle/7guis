@@ -1,5 +1,6 @@
 package de.fluxparticle.sevenguis.gui7cells.formula;
 
+import de.fluxparticle.sevenguis.gui7cells.cell.Cell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 

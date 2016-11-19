@@ -1,6 +1,10 @@
 package de.fluxparticle.sevenguis.gui7cells;
 
-import de.fluxparticle.sevenguis.gui7cells.formula.*;
+import de.fluxparticle.sevenguis.gui7cells.cell.Cell;
+import de.fluxparticle.sevenguis.gui7cells.formula.Content;
+import de.fluxparticle.sevenguis.gui7cells.formula.FormulaSyntax;
+import de.fluxparticle.sevenguis.gui7cells.formula.Model;
+import de.fluxparticle.sevenguis.gui7cells.formula.Text;
 import de.fluxparticle.syntax.config.EnumSyntaxConfig;
 import de.fluxparticle.syntax.parser.Lexer;
 import de.fluxparticle.syntax.parser.Parser;
@@ -55,6 +59,7 @@ public class CellsFX extends Application {
             }
 
             String input = ofNullable((String) o).orElse("");
+
             Content content;
             try {
                 Reader reader = new StringReader(input);
@@ -63,6 +68,7 @@ public class CellsFX extends Application {
             } catch (Exception e) {
                 content = new Text(input);
             }
+
             return new CellInfo(content, input);
         }
     };

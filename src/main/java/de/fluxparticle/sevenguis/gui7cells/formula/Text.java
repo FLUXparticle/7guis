@@ -1,5 +1,7 @@
 package de.fluxparticle.sevenguis.gui7cells.formula;
 
+import de.fluxparticle.sevenguis.gui7cells.cell.Cell;
+
 import java.util.List;
 
 import static java.util.Collections.emptyList;
