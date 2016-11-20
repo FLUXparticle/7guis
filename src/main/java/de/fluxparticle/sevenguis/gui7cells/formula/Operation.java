@@ -10,22 +10,29 @@ import static java.util.stream.Stream.concat;
 /**
  * Created by sreinck on 18.11.16.
  */
-public class Operation extends Expression {
+public final class Operation extends Expression {
+
+    private final Formula left;
 
     private final Operator operator;
 
-    private final Expression tail;
+    private final Expression right;
 
-    public Operation(Expression info, Operator operator, Expression tail) {
-        super(info);
+    public Operation(Expression left, Operator operator, Expression right) {
+        this.left = left;
         this.operator = operator;
-        this.tail = tail;
+        this.right = right;
+    }
+
+    @Override
+    public Formula getLeft() {
+        return left;
     }
 
     @Override
     public Object evalExpression(Object leftObject, Model env) {
         double leftValue = (double) leftObject;
-        double rightValue = (double) tail.getInfo().eval(env);
+        double rightValue = (double) right.getLeft().eval(env);
 
         double value;
         switch (operator) {
@@ -48,19 +55,29 @@ public class Operation extends Expression {
                 throw new RuntimeException();
         }
 
-        return tail.evalExpression(value, env);
+        return right.evalExpression(value, env);
+    }
+
+    @Override
+    public Object eval(Model env) {
+        Object leftObject = left.eval(env);
+        return evalExpression(leftObject, env);
     }
 
     @Override
     public List<Cell> getReferences(Model env) {
-        List<Cell> left = super.getReferences(env);
-        List<Cell> right = tail.getReferences(env);
+        List<Cell> left = this.left.getReferences(env);
+        List<Cell> right = this.right.getReferences(env);
         return concat(left.stream(), right.stream()).collect(toList());
     }
 
     @Override
     public String toString() {
-        return super.toString() + operator + tail;
+        StringBuilder sb = new StringBuilder();
+        sb.append(left);
+        sb.append(operator);
+        sb.append(right);
+        return sb.toString();
     }
 
 }

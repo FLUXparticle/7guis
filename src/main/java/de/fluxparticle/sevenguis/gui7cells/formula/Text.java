@@ -9,7 +9,7 @@ import static java.util.Collections.emptyList;
 /**
  * Created by sreinck on 19.11.16.
  */
-public class Text extends Content {
+public final class Text extends Content {
 
     public static final Text EMPTY = new Text("");
 

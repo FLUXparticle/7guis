@@ -9,7 +9,7 @@ import static java.util.Collections.emptyList;
 /**
  * Created by sreinck on 24.02.16.
  */
-public class Number extends Formula {
+public final class Number extends Formula {
 
     private final double value;
 

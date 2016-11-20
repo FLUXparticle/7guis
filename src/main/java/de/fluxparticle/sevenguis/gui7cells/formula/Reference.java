@@ -9,7 +9,7 @@ import static java.util.Collections.singletonList;
 /**
  * Created by sreinck on 24.02.16.
  */
-public class Reference extends Formula {
+public final class Reference extends Formula {
 
     private final int row;
 

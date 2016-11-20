@@ -25,7 +25,7 @@ public enum FormulaSyntax implements Rule {
     BIG_LETTER("[A-Z]", objects -> objects[0].toString()),
     REFERENCE("BIG_LETTER +DIGIT", FormulaSyntax::reduceReference),
 
-    FACTOR("(REFERENCE|NUMBER)", objects -> new Expression((Formula) objects[0])),
+    FACTOR("(REFERENCE|NUMBER)", objects -> new Operand((Formula) objects[0])),
 
     TERM("FACTOR ?{('*'|'/'|'%') TERM}", FormulaSyntax::reduceExpression),
 
@@ -75,7 +75,7 @@ public enum FormulaSyntax implements Rule {
         Expression left = (Expression) objects[0];
         return Optional.ofNullable((List) objects[1])
                 .map(l -> (Content) new Operation(left, fromString(l.get(0).toString()), (Expression) l.get(1)))
-                .orElseGet(() -> new Expression(left));
+                .orElseGet(() -> new Operand(left));
     }
 
     @SuppressWarnings("unchecked cast")

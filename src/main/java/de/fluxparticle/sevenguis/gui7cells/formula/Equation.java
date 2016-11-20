@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by sreinck on 18.11.16.
  */
-public class Equation extends Formula {
+public final class Equation extends Formula {
 
     private final Expression expression;
 
