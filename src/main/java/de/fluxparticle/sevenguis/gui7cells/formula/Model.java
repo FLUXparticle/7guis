@@ -5,22 +5,19 @@ import de.fluxparticle.sevenguis.gui7cells.cell.CellFactory;
 
 public class Model {
 
-    private final CellFactory factory;
-
     private final Cell[][] cells;
 
-    public Model(int height, int width, CellFactory factory) {
-        this.factory = factory;
-        cells = new Cell[height][width];
+    public Model(int rows, int cols, CellFactory factory) {
+        cells = new Cell[rows][cols];
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                cells[r][c] = factory.createCell(this);
+            }
+        }
     }
 
     public Cell getCell(int row, int column) {
-        Cell cell = cells[row][column];
-        if (cell == null) {
-            cell = factory.createCell();
-            cells[row][column] = cell;
-        }
-        return cell;
+        return cells[row][column];
     }
 
 }

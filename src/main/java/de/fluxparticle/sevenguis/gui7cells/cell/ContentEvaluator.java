@@ -7,41 +7,41 @@ import static java.util.Optional.ofNullable;
 /**
  * Created by sreinck on 20.11.16.
  */
-public class ContentEvaluatorFX implements ContentVisitor<Object, Double> {
+public class ContentEvaluator implements ContentVisitor<Object, Object> {
 
     private final Model model;
 
-    public ContentEvaluatorFX(Model model) {
+    public ContentEvaluator(Model model) {
         this.model = model;
     }
 
     @Override
-    public Object visitEquation(Expression expression, Double leftObject) {
+    public Object visitEquation(Expression expression, Object leftObject) {
         return expression.accept(this, null);
     }
 
     @Override
-    public Object visitNumber(double value, Double leftObject) {
+    public Object visitNumber(double value, Object leftObject) {
         return value;
     }
 
     @Override
-    public Object visitText(String text, Double leftObject) {
+    public Object visitText(String text, Object leftObject) {
         return text;
     }
 
     @Override
-    public Object visitReference(int row, int column, Double leftObject) {
-        return model.getCell(row, column).getValue();
+    public Object visitReference(int row, int column, Object leftObject) {
+        return ((CellUtil) model.getCell(row, column)).getValue();
     }
 
     @Override
-    public Object visitOperand(Formula left, Double leftObject) {
-        return ofNullable((Object) leftObject).orElseGet(() -> left.accept(this, null));
+    public Object visitOperand(Formula left, Object leftObject) {
+        return ofNullable(leftObject).orElseGet(() -> left.accept(this, null));
     }
 
     @Override
-    public Object visitOperation(Formula left, Operator operator, Expression right, Double leftObject) {
+    public Object visitOperation(Formula left, Operator operator, Expression right, Object leftObject) {
         double leftValue = (double) left.accept(this, leftObject);
         double rightValue = (double) right.getLeft().accept(this, null);
 

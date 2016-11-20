@@ -9,21 +9,23 @@ import javafx.beans.property.StringProperty;
  */
 public abstract class Cell {
 
-    private final StringProperty text = new SimpleStringProperty();
+    private final StringProperty text = new SimpleStringProperty("---");
 
     public abstract Content getContent();
 
     public abstract void setContent(Content content);
 
-    public abstract Object getValue();
-
-    protected void setValue(Object value) {
+    protected void updateValue(Object value) {
         String newText = String.valueOf(value);
         text.setValue(newText);
     }
 
     public StringProperty textProperty() {
         return text;
+    }
+
+    public String getText() {
+        return text.get();
     }
 
     public void setText(String text) {

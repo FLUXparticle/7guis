@@ -1,6 +1,6 @@
 package de.fluxparticle.sevenguis.gui7cells.formula;
 
-import de.fluxparticle.sevenguis.gui7cells.cell.ContentEvaluatorFX;
+import de.fluxparticle.sevenguis.gui7cells.cell.ContentEvaluator;
 import de.fluxparticle.syntax.config.EnumSyntaxConfig;
 import de.fluxparticle.syntax.lexer.ParserException;
 import de.fluxparticle.syntax.parser.Lexer;
@@ -72,7 +72,7 @@ public class FormulaSyntaxTest {
 
     private static void testCalc(String input, double expected) throws ParserException {
         Formula check = parseFormula(input);
-        ContentEvaluatorFX evaluator = new ContentEvaluatorFX(null);
+        ContentEvaluator evaluator = new ContentEvaluator(null);
         double actual = (Double) check.accept(evaluator, null);
         assertEquals(expected, actual, 0.0);
     }

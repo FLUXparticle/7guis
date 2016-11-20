@@ -161,7 +161,7 @@ class CircleDrawerFenja extends CircleDrawerBase {
                         def changeDialogs = [:]
                         vDialogs.forEach { entry ->
                             if (!circles.containsKey(entry.key)) {
-                                changeDialogs[entry.key] = entry.value
+                                changeDialogs[entry.key] = entry.updateValue
                             }
                         }
                         return changeDialogs
