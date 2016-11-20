@@ -80,4 +80,9 @@ public final class Operation extends Expression {
         return sb.toString();
     }
 
+    @Override
+    public <R, D> R accept(ContentVisitor<R, D> visitor, D data) {
+        return visitor.visitOperation(left, operator, right, data);
+    }
+
 }

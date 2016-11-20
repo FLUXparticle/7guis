@@ -39,4 +39,9 @@ public final class Operand extends Expression {
         return left.toString();
     }
 
+    @Override
+    public <R, D> R accept(ContentVisitor<R, D> visitor, D data) {
+        return visitor.visitOperand(left, data);
+    }
+
 }

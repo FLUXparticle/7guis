@@ -30,4 +30,9 @@ public final class Number extends Formula {
         return emptyList();
     }
 
+    @Override
+    public <R, D> R accept(ContentVisitor<R, D> visitor, D data) {
+        return visitor.visitNumber(value, data);
+    }
+
 }

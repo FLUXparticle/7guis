@@ -25,16 +25,24 @@ public final class Reference extends Formula {
         this.column = column;
     }
 
+    @Override
     public String toString() {
         return Character.toString((char) ('A' + column)) + (row + 1);
     }
 
+    @Override
     public Object eval(Model env) {
         return env.getCell(row, column).getValue();
     }
 
+    @Override
     public List<Cell> getReferences(Model env) {
         return singletonList(env.getCell(row, column));
+    }
+
+    @Override
+    public <R, D> R accept(ContentVisitor<R, D> visitor, D data) {
+        return visitor.visitReference(row, column, data);
     }
 
 }

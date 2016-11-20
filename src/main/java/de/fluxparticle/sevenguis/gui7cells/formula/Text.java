@@ -34,4 +34,9 @@ public final class Text extends Content {
         return text;
     }
 
+    @Override
+    public <R, D> R accept(ContentVisitor<R, D> visitor, D data) {
+        return visitor.visitText(text, data);
+    }
+
 }

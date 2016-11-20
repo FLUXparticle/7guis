@@ -30,4 +30,9 @@ public final class Equation extends Formula {
         return "=" + expression.toString();
     }
 
+    @Override
+    public <R, D> R accept(ContentVisitor<R, D> visitor, D data) {
+        return visitor.visitEquation(expression, data);
+    }
+
 }
