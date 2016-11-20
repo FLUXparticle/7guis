@@ -7,6 +7,4 @@ public abstract class Expression extends Formula {
 
     public abstract Formula getLeft();
 
-    public abstract Object evalExpression(Object leftObject, Model env);
-
 }

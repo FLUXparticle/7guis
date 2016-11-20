@@ -1,5 +1,6 @@
 package de.fluxparticle.sevenguis.gui7cells.formula;
 
+import de.fluxparticle.sevenguis.gui7cells.cell.ContentEvaluatorFX;
 import de.fluxparticle.syntax.config.EnumSyntaxConfig;
 import de.fluxparticle.syntax.lexer.ParserException;
 import de.fluxparticle.syntax.parser.Lexer;
@@ -40,6 +41,11 @@ public class FormulaSyntaxTest {
     }
 
     @Test
+    public void multiplication() throws ParserException {
+        testCalc("=2*3", 6);
+    }
+
+    @Test
     public void multiplicationLast() throws ParserException {
         testCalc("=1+2*3", 7);
     }
@@ -66,7 +72,8 @@ public class FormulaSyntaxTest {
 
     private static void testCalc(String input, double expected) throws ParserException {
         Formula check = parseFormula(input);
-        double actual = (double) check.eval(null);
+        ContentEvaluatorFX evaluator = new ContentEvaluatorFX(null);
+        double actual = (Double) check.accept(evaluator, null);
         assertEquals(expected, actual, 0.0);
     }
 

@@ -8,6 +8,8 @@ import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
+import java.util.ArrayList;
+
 /**
  * Created by sreinck on 19.11.16.
  */
@@ -29,11 +31,12 @@ public class CellFX extends Cell implements InvalidationListener {
     }
 
     public void setContent(Content content) {
-        for (Cell cell : this.content.getReferences(model)) {
+        ReferenceCollector collector = new ReferenceCollector(model);
+        for (Cell cell : this.content.accept(collector, new ArrayList<>())) {
             ((CellFX) cell).value.removeListener(this);
         }
         this.content = content;
-        for (Cell cell : this.content.getReferences(model)) {
+        for (Cell cell : this.content.accept(collector, new ArrayList<>())) {
             ((CellFX) cell).value.addListener(this);
         }
         invalidated(null);
@@ -53,7 +56,8 @@ public class CellFX extends Cell implements InvalidationListener {
         Object value;
 
         try {
-            value = content.eval(model);
+            ContentEvaluatorFX evaluator = new ContentEvaluatorFX(model);
+            value = content.accept(evaluator, null);
         } catch (Exception e) {
             value = "Error!";
         }
