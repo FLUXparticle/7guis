@@ -1,13 +1,18 @@
 package de.fluxparticle.sevenguis.gui7cells.cell;
 
-import de.fluxparticle.sevenguis.gui7cells.formula.*;
+import de.fluxparticle.sevenguis.gui7cells.formula.Expression;
+import de.fluxparticle.sevenguis.gui7cells.formula.Formula;
+import de.fluxparticle.sevenguis.gui7cells.formula.Model;
+import de.fluxparticle.sevenguis.gui7cells.formula.Operator;
+
+import java.util.function.BiFunction;
 
 import static java.util.Optional.ofNullable;
 
 /**
  * Created by sreinck on 20.11.16.
  */
-public class ContentEvaluator implements ContentVisitor<Object, Object> {
+public class ContentEvaluator implements ContentReducer<Object> {
 
     private final Model model;
 
@@ -42,29 +47,12 @@ public class ContentEvaluator implements ContentVisitor<Object, Object> {
 
     @Override
     public Object visitOperation(Formula left, Operator operator, Expression right, Object leftObject) {
-        double leftValue = (double) left.accept(this, leftObject);
-        double rightValue = (double) right.getLeft().accept(this, null);
+        Object leftValue = left.accept(this, leftObject);
+        Object rightValue = right.getLeft().accept(this, null);
 
-        double value;
-        switch (operator) {
-            case ADD:
-                value = leftValue + rightValue;
-                break;
-            case SUB:
-                value = leftValue - rightValue;
-                break;
-            case MUL:
-                value = leftValue * rightValue;
-                break;
-            case DIV:
-                value = leftValue / rightValue;
-                break;
-            case MOD:
-                value = leftValue % rightValue;
-                break;
-            default:
-                throw new RuntimeException();
-        }
+        BiFunction<Double, Double, Double> function = getOperationFunction(operator);
+
+        Object value = reduce(leftValue, rightValue, function);
 
         return right.accept(this, value);
     }

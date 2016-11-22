@@ -1,20 +1,21 @@
 package de.fluxparticle.sevenguis.gui7cells.cell;
 
-import de.fluxparticle.sevenguis.gui7cells.formula.*;
-import javafx.beans.binding.DoubleExpression;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleStringProperty;
+import de.fluxparticle.sevenguis.gui7cells.formula.Expression;
+import de.fluxparticle.sevenguis.gui7cells.formula.Formula;
+import de.fluxparticle.sevenguis.gui7cells.formula.Model;
+import de.fluxparticle.sevenguis.gui7cells.formula.Operator;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 
-import static javafx.beans.binding.DoubleExpression.doubleExpression;
+import java.util.function.BiFunction;
+
 import static org.fxmisc.easybind.EasyBind.combine;
-import static org.fxmisc.easybind.EasyBind.map;
 
 
 /**
  * Created by sreinck on 20.11.16.
  */
-public class ContentObservable implements ContentVisitor<ObservableValue<?>, ObservableValue<?>> {
+public class ContentObservable implements ContentReducer<ObservableValue<Object>> {
 
     private final Model model;
 
@@ -23,27 +24,27 @@ public class ContentObservable implements ContentVisitor<ObservableValue<?>, Obs
     }
 
     @Override
-    public ObservableValue<?> visitEquation(Expression expression, ObservableValue<?> leftObservable) {
+    public ObservableValue<Object> visitEquation(Expression expression, ObservableValue<Object> leftObservable) {
         return expression.accept(this, null);
     }
 
     @Override
-    public ObservableValue<?> visitNumber(double value, ObservableValue<?> leftObservable) {
-        return new SimpleDoubleProperty(value);
+    public ObservableValue<Object> visitNumber(double value, ObservableValue<Object> leftObservable) {
+        return new SimpleObjectProperty<>(value);
     }
 
     @Override
-    public ObservableValue<?> visitText(String text, ObservableValue<?> leftObservable) {
-        return new SimpleStringProperty(text);
+    public ObservableValue<Object> visitText(String text, ObservableValue<Object> leftObservable) {
+        return new SimpleObjectProperty<>(text);
     }
 
     @Override
-    public ObservableValue<?> visitReference(int row, int column, ObservableValue<?> leftObservable) {
+    public ObservableValue<Object> visitReference(int row, int column, ObservableValue<Object> leftObservable) {
         return ((CellFX) model.getCell(row, column)).valueProperty();
     }
 
     @Override
-    public ObservableValue<?> visitOperand(Formula left, ObservableValue<?> leftObservable) {
+    public ObservableValue<Object> visitOperand(Formula left, ObservableValue<Object> leftObservable) {
         if (leftObservable != null) {
             return leftObservable;
         } else {
@@ -52,32 +53,19 @@ public class ContentObservable implements ContentVisitor<ObservableValue<?>, Obs
     }
 
     @Override
-    public ObservableValue<?> visitOperation(Formula left, Operator operator, Expression right, ObservableValue<?> leftObservable) {
-        DoubleExpression leftValue = doubleExpression(map(left.accept(this, leftObservable), o -> (Double) o));
-        DoubleExpression rightValue = doubleExpression(map(right.getLeft().accept(this, null), o -> (Double) o));
+    public ObservableValue<Object> visitOperation(Formula left, Operator operator, Expression right, ObservableValue<Object> leftObservable) {
+        ObservableValue<Object> leftValue = left.accept(this, leftObservable);
+        ObservableValue<Object> rightValue = right.getLeft().accept(this, null);
 
-        ObservableValue<?> value;
-        switch (operator) {
-            case ADD:
-                value = leftValue.add(rightValue);
-                break;
-            case SUB:
-                value = leftValue.subtract(rightValue);
-                break;
-            case MUL:
-                value = leftValue.multiply(rightValue);
-                break;
-            case DIV:
-                value = leftValue.divide(rightValue);
-                break;
-            case MOD:
-                value = combine(leftValue.asObject(), rightValue.asObject(), (l, r) -> l % r);
-                break;
-            default:
-                throw new RuntimeException();
-        }
+        BiFunction<Double, Double, Double> function = getOperationFunction(operator);
+
+        ObservableValue<Object> value = combine(leftValue, rightValue, lift(function));
 
         return right.accept(this, value);
     }
-    
+
+    private BiFunction<Object, Object, Object> lift(BiFunction<Double, Double, Double> f) {
+        return (a, b) -> reduce(a, b, f);
+    }
+
 }

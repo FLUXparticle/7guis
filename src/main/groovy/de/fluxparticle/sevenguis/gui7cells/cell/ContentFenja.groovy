@@ -1,16 +1,17 @@
 package de.fluxparticle.sevenguis.gui7cells.cell
 
-import de.fluxparticle.sevenguis.gui7cells.formula.ContentVisitor
 import de.fluxparticle.sevenguis.gui7cells.formula.Expression
 import de.fluxparticle.sevenguis.gui7cells.formula.Formula
 import de.fluxparticle.sevenguis.gui7cells.formula.Operator
+
+import java.util.function.BiFunction
 
 import static de.fluxparticle.fenja.Value.constValue
 
 /**
  * Created by sreinck on 20.11.16.
  */
-class ContentFenja implements ContentVisitor {
+class ContentFenja implements ContentReducer {
 
     def model;
 
@@ -41,31 +42,18 @@ class ContentFenja implements ContentVisitor {
 
     @Override
     visitOperation(Formula left, Operator operator, Expression right, leftObject) {
-        def leftValue = left.accept(this, leftObject).map { it as Double }
-        def rightValue = right.getLeft().accept(this, null).map { it as Double }
+        def leftValue = left.accept(this, leftObject)
+        def rightValue = right.getLeft().accept(this, null)
 
-        def value
-        switch (operator) {
-            case Operator.ADD:
-                value = (leftValue ** rightValue) { a, b -> a + b }
-                break;
-            case Operator.SUB:
-                value = (leftValue ** rightValue) { a, b -> a - b }
-                break;
-            case Operator.MUL:
-                value = (leftValue ** rightValue) { a, b -> a * b }
-                break;
-            case Operator.DIV:
-                value = (leftValue ** rightValue) { a, b -> a / b }
-                break;
-            case Operator.MOD:
-                value = (leftValue ** rightValue) { a, b -> a % b }
-                break;
-            default:
-                throw new RuntimeException();
-        }
+        def function = getOperationFunction(operator)
+
+        def value = (leftValue ** rightValue) lift(function)
 
         right.accept(this, value);
+    }
+
+    def lift(BiFunction c) {
+        { a, b -> reduce(a, b, c) }
     }
 
 }

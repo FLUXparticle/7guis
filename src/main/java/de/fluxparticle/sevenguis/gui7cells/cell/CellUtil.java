@@ -72,14 +72,7 @@ public class CellUtil extends Cell implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        Object value;
-
-        try {
-            value = content.accept(evaluator, null);
-        } catch (Exception e) {
-            value = "Error!";
-        }
-
+        Object value = content.accept(evaluator, null);
         updateValue(value);
     }
 
