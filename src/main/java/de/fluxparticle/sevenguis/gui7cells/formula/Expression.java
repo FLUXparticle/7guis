@@ -5,6 +5,4 @@ package de.fluxparticle.sevenguis.gui7cells.formula;
  */
 public abstract class Expression extends Formula {
 
-    public abstract Formula getLeft();
-
 }

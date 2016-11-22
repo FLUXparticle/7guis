@@ -43,7 +43,7 @@ public class ReferenceCollector implements ContentVisitor<List<Cell>, List<Cell>
     }
 
     @Override
-    public List<Cell> visitOperation(Formula left, Operator operator, Expression right, List<Cell> list) {
+    public List<Cell> visitOperation(Expression left, Operator operator, Formula right, List<Cell> list) {
         list = left.accept(this, list);
         list = right.accept(this, list);
         return list;

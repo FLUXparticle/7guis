@@ -11,48 +11,36 @@ import static de.fluxparticle.fenja.Value.constValue
 /**
  * Created by sreinck on 20.11.16.
  */
-class ContentFenja extends ContentReducer {
+class ContentFenja extends ContentReducer<Object> {
 
     def model;
 
     @Override
-    visitEquation(Expression expression, leftObject) {
-        expression.accept(this, null)
-    }
-
-    @Override
-    visitNumber(double value, leftObject) {
+    visitNumber(double value, Void data) {
         constValue(value)
     }
 
     @Override
-    visitText(String text, leftObject) {
+    visitText(String text, Void data) {
         constValue(text)
     }
 
     @Override
-    visitReference(int row, int column, leftObject) {
+    visitReference(int row, int column, Void data) {
         model.getCell(row, column).value
     }
 
     @Override
-    visitOperand(Formula left, leftObject) {
-        leftObject ?: left.accept(this, null)
-    }
-
-    @Override
-    visitOperation(Formula left, Operator operator, Expression right, leftObject) {
-        def leftValue = left.accept(this, leftObject)
-        def rightValue = right.getLeft().accept(this, null)
+    visitOperation(Expression left, Operator operator, Formula right, Void data) {
+        def leftValue = left.accept(this, null)
+        def rightValue = right.accept(this, null)
 
         def function = getOperationFunction(operator)
 
-        def value = (leftValue ** rightValue) lift(function)
-
-        right.accept(this, value);
+        (leftValue ** rightValue) lift(function)
     }
 
-    def lift(BiFunction c) {
+    static def lift(BiFunction c) {
         { a, b -> reduce(a, b, c) }
     }
 

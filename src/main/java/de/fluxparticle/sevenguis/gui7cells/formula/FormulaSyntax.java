@@ -7,7 +7,6 @@ import de.fluxparticle.syntax.structure.SimpleRule;
 import de.fluxparticle.syntax.structure.SingleElement;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 import static de.fluxparticle.sevenguis.gui7cells.formula.Operator.fromString;
@@ -27,9 +26,9 @@ public enum FormulaSyntax implements Rule {
 
     FACTOR("(REFERENCE|NUMBER)", objects -> new Operand((Formula) objects[0])),
 
-    TERM("FACTOR ?{('*'|'/'|'%') TERM}", FormulaSyntax::reduceExpression),
+    TERM("FACTOR *{('*'|'/'|'%') FACTOR}", FormulaSyntax::reduceExpression),
 
-    EXPRESSION("TERM ?{('+'|'-') EXPRESSION}", FormulaSyntax::reduceExpression),
+    EXPRESSION("TERM *{('+'|'-') TERM}", FormulaSyntax::reduceExpression),
 
     EQUATION("'=' EXPRESSION", objects -> new Equation((Expression) objects[1])),
 
@@ -71,11 +70,17 @@ public enum FormulaSyntax implements Rule {
         return new Reference(s);
     }
 
+    @SuppressWarnings("unchecked")
     private static Object reduceExpression(Object[] objects) {
         Expression left = (Expression) objects[0];
-        return Optional.ofNullable((List) objects[1])
-                .map(l -> (Content) new Operation(left, fromString(l.get(0).toString()), (Expression) l.get(1)))
-                .orElseGet(() -> new Operand(left));
+
+        for (List l : (List<List>) objects[1]) {
+            Operator op = fromString(l.get(0).toString());
+            Formula right = (Formula) l.get(1);
+            left = new Operation(left, op, right);
+        }
+
+        return left;
     }
 
     @SuppressWarnings("unchecked cast")

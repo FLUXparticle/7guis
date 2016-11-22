@@ -5,21 +5,16 @@ package de.fluxparticle.sevenguis.gui7cells.formula;
  */
 public final class Operation extends Expression {
 
-    private final Formula left;
+    private final Expression left;
 
     private final Operator operator;
 
-    private final Expression right;
+    private final Formula right;
 
-    public Operation(Expression left, Operator operator, Expression right) {
+    public Operation(Expression left, Operator operator, Formula right) {
         this.left = left;
         this.operator = operator;
         this.right = right;
-    }
-
-    @Override
-    public Formula getLeft() {
-        return left;
     }
 
     @Override

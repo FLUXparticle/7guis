@@ -15,6 +15,6 @@ public interface ContentVisitor<R, D> {
 
     R visitOperand(Formula left, D data);
 
-    R visitOperation(Formula left, Operator operator, Expression right, D data);
+    R visitOperation(Expression left, Operator operator, Formula right, D data);
 
 }

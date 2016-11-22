@@ -23,44 +23,28 @@ public class ContentFRP extends ContentReducer<Value<Object>> {
     }
 
     @Override
-    public Value<Object> visitEquation(Expression expression, Value<Object> leftObject) {
-        return expression.accept(this, null);
-    }
-
-    @Override
-    public Value<Object> visitNumber(double value, Value<Object> leftObject) {
+    public Value<Object> visitNumber(double value, Void data) {
         return constValue(value);
     }
 
     @Override
-    public Value<Object> visitText(String text, Value<Object> leftObject) {
+    public Value<Object> visitText(String text, Void data) {
         return constValue(text);
     }
 
     @Override
-    public Value<Object> visitReference(int row, int column, Value<Object> leftObject) {
+    public Value<Object> visitReference(int row, int column, Void data) {
         return ((CellFRP) model.getCell(row, column)).valueProperty();
     }
 
     @Override
-    public Value<Object> visitOperand(Formula left, Value<Object> leftObject) {
-        if (leftObject != null) {
-            return leftObject;
-        } else {
-            return left.accept(this, null);
-        }
-    }
-
-    @Override
-    public Value<Object> visitOperation(Formula left, Operator operator, Expression right, Value<Object> leftObject) {
-        Value<Object> leftValue = left.accept(this, leftObject);
-        Value<Object> rightValue = right.getLeft().accept(this, null);
+    public Value<Object> visitOperation(Expression left, Operator operator, Formula right, Void data) {
+        Value<Object> leftValue = left.accept(this, null);
+        Value<Object> rightValue = right.accept(this, null);
 
         BiFunction<Double, Double, Double> function = getOperationFunction(operator);
         
-        Value<Object> value = leftValue.lift(rightValue, lift(function));
-
-        return right.accept(this, value);
+        return leftValue.lift(rightValue, lift(function));
     }
 
     private Lambda2<Object, Object, Object> lift(BiFunction<Double, Double, Double> f) {

@@ -7,8 +7,6 @@ import de.fluxparticle.sevenguis.gui7cells.formula.Operator;
 
 import java.util.function.BiFunction;
 
-import static java.util.Optional.ofNullable;
-
 /**
  * Created by sreinck on 20.11.16.
  */
@@ -21,40 +19,28 @@ public class ContentEvaluator extends ContentReducer<Object> {
     }
 
     @Override
-    public Object visitEquation(Expression expression, Object leftObject) {
-        return expression.accept(this, null);
-    }
-
-    @Override
-    public Object visitNumber(double value, Object leftObject) {
+    public Object visitNumber(double value, Void data) {
         return value;
     }
 
     @Override
-    public Object visitText(String text, Object leftObject) {
+    public Object visitText(String text, Void data) {
         return text;
     }
 
     @Override
-    public Object visitReference(int row, int column, Object leftObject) {
+    public Object visitReference(int row, int column, Void data) {
         return ((CellUtil) model.getCell(row, column)).getValue();
     }
 
     @Override
-    public Object visitOperand(Formula left, Object leftObject) {
-        return ofNullable(leftObject).orElseGet(() -> left.accept(this, null));
-    }
-
-    @Override
-    public Object visitOperation(Formula left, Operator operator, Expression right, Object leftObject) {
-        Object leftValue = left.accept(this, leftObject);
-        Object rightValue = right.getLeft().accept(this, null);
+    public Object visitOperation(Expression left, Operator operator, Formula right, Void data) {
+        Object leftValue = left.accept(this, null);
+        Object rightValue = right.accept(this, null);
 
         BiFunction<Double, Double, Double> function = getOperationFunction(operator);
 
-        Object value = reduce(leftValue, rightValue, function);
-
-        return right.accept(this, value);
+        return reduce(leftValue, rightValue, function);
     }
 
 }

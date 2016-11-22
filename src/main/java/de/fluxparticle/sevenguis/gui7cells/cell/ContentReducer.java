@@ -1,6 +1,8 @@
 package de.fluxparticle.sevenguis.gui7cells.cell;
 
 import de.fluxparticle.sevenguis.gui7cells.formula.ContentVisitor;
+import de.fluxparticle.sevenguis.gui7cells.formula.Expression;
+import de.fluxparticle.sevenguis.gui7cells.formula.Formula;
 import de.fluxparticle.sevenguis.gui7cells.formula.Operator;
 
 import java.util.function.BiFunction;
@@ -8,7 +10,17 @@ import java.util.function.BiFunction;
 /**
  * Created by sreinck on 21.11.16.
  */
-public abstract class ContentReducer<T> implements ContentVisitor<T, T> {
+public abstract class ContentReducer<R> implements ContentVisitor<R, Void> {
+
+    @Override
+    public final R visitEquation(Expression expression, Void data) {
+        return expression.accept(this, null);
+    }
+
+    @Override
+    public final R visitOperand(Formula left, Void data) {
+        return left.accept(this, null);
+    }
 
     static BiFunction<Double, Double, Double> getOperationFunction(Operator operator) {
         switch (operator) {

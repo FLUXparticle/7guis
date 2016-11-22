@@ -12,11 +12,6 @@ public final class Operand extends Expression {
     }
 
     @Override
-    public Formula getLeft() {
-        return left;
-    }
-
-    @Override
     public String toString() {
         return left.toString();
     }
