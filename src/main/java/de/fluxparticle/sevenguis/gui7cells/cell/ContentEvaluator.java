@@ -12,7 +12,7 @@ import static java.util.Optional.ofNullable;
 /**
  * Created by sreinck on 20.11.16.
  */
-public class ContentEvaluator implements ContentReducer<Object> {
+public class ContentEvaluator extends ContentReducer<Object> {
 
     private final Model model;
 

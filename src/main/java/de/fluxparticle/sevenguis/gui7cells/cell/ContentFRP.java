@@ -14,7 +14,7 @@ import static de.fluxparticle.fenja.Value.constValue;
 /**
  * Created by sreinck on 20.11.16.
  */
-public class ContentFRP implements ContentReducer<Value<Object>> {
+public class ContentFRP extends ContentReducer<Value<Object>> {
 
     private final Model model;
 

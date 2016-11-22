@@ -15,7 +15,7 @@ import static org.fxmisc.easybind.EasyBind.combine;
 /**
  * Created by sreinck on 20.11.16.
  */
-public class ContentObservable implements ContentReducer<ObservableValue<Object>> {
+public class ContentObservable extends ContentReducer<ObservableValue<Object>> {
 
     private final Model model;
 

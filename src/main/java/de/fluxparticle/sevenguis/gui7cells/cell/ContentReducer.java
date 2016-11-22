@@ -8,9 +8,9 @@ import java.util.function.BiFunction;
 /**
  * Created by sreinck on 21.11.16.
  */
-public interface ContentReducer<T> extends ContentVisitor<T, T> {
+public abstract class ContentReducer<T> implements ContentVisitor<T, T> {
 
-    default BiFunction<Double, Double, Double> getOperationFunction(Operator operator) {
+    static BiFunction<Double, Double, Double> getOperationFunction(Operator operator) {
         switch (operator) {
             case ADD:
                 return (a, b) -> a + b;
@@ -27,7 +27,7 @@ public interface ContentReducer<T> extends ContentVisitor<T, T> {
         throw new IllegalArgumentException();
     }
 
-    default Object reduce(Object a, Object b, BiFunction<Double, Double, Double> f) {
+    static Object reduce(Object a, Object b, BiFunction<Double, Double, Double> f) {
         try {
             return f.apply((Double) a, (Double) b);
         } catch (Exception e) {

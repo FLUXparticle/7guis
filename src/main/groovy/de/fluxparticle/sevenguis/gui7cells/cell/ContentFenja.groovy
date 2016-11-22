@@ -11,7 +11,7 @@ import static de.fluxparticle.fenja.Value.constValue
 /**
  * Created by sreinck on 20.11.16.
  */
-class ContentFenja implements ContentReducer {
+class ContentFenja extends ContentReducer {
 
     def model;
 
