@@ -10,11 +10,17 @@ import static org.reactfx.EventStreams.valuesOf;
 public class FlightBookerReactFX extends FlightBookerBase {
 
     protected void bind() {
-        EventStream<Boolean> oneWay = valuesOf(flightType.valueProperty()).map(v -> v == FlightType.ONE_WAY_FLIGHT);
+        EventStream<FlightType> vFlightType = valuesOf(flightType.valueProperty());
+        EventStream<String> vStartDate = valuesOf(startDate.textProperty());
+        EventStream<String> vReturnDate = valuesOf(returnDate.textProperty());
 
-        EventStream<LocalDate> startDateDate = valuesOf(startDate.textProperty())
+        // -----
+
+        EventStream<Boolean> oneWay = vFlightType.map(v -> v == FlightType.ONE_WAY_FLIGHT);
+
+        EventStream<LocalDate> startDateDate = vStartDate
                 .map(txt -> isDateString(txt) ? stringToDate(txt) : null);
-        EventStream<LocalDate> returnDateDate = valuesOf(returnDate.textProperty())
+        EventStream<LocalDate> returnDateDate = vReturnDate
                 .map(txt -> isDateString(txt) ? stringToDate(txt) : null);
 
         EventStream<Boolean> startDateValid = startDateDate.map(v -> v != null);
@@ -25,6 +31,8 @@ public class FlightBookerReactFX extends FlightBookerBase {
 
         EventStream<Boolean> datesValid = combine(oneWay, startDateValid, dateRangeValid)
                 .map((o, s, r) -> (o && s) || r);
+
+        // -----
 
         oneWay.feedTo(returnDate.disableProperty());
         startDateValid.map(v -> v ? STYLE_NORMAL : STYLE_ERROR).feedTo(startDate.styleProperty());

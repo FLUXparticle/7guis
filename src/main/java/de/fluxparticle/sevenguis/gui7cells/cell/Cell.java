@@ -16,7 +16,9 @@ public abstract class Cell {
     public abstract void setContent(Content content);
 
     protected void updateValue(Object value) {
+        String oldText = text.getValue();
         String newText = String.valueOf(value);
+        System.out.println(oldText + " -> " + newText);
         text.setValue(newText);
     }
 
