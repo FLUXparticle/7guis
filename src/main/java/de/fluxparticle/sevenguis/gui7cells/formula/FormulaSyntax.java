@@ -24,7 +24,9 @@ public enum FormulaSyntax implements Rule {
     BIG_LETTER("[A-Z]", objects -> objects[0].toString()),
     REFERENCE("BIG_LETTER +DIGIT", FormulaSyntax::reduceReference),
 
-    FACTOR("(REFERENCE|NUMBER)", objects -> new Operand((Formula) objects[0])),
+    BRACKETS("'(' EXPRESSION ')'", objects -> objects[1]),
+
+    FACTOR("(REFERENCE|NUMBER|BRACKETS)", objects -> new Operand((Formula) objects[0])),
 
     TERM("FACTOR *{('*'|'/'|'%') FACTOR}", FormulaSyntax::reduceExpression),
 

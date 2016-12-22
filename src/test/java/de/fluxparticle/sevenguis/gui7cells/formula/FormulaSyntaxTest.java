@@ -4,6 +4,7 @@ import de.fluxparticle.sevenguis.gui7cells.cell.ContentEvaluator;
 import de.fluxparticle.syntax.config.EnumSyntaxConfig;
 import de.fluxparticle.syntax.lexer.ParserException;
 import de.fluxparticle.syntax.parser.Lexer;
+import de.fluxparticle.syntax.parser.FullParser;
 import de.fluxparticle.syntax.parser.Parser;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ public class FormulaSyntaxTest {
 
     private static final EnumSyntaxConfig<FormulaSyntax> CONFIG = new EnumSyntaxConfig<>(FormulaSyntax.class);
 
-    private static final Parser PARSER = CONFIG.getParser(FormulaSyntax.FORMULA);
+    private static final Parser PARSER = new FullParser(CONFIG.getParser(FormulaSyntax.FORMULA));
 
     @Test
     public void number() throws ParserException {
@@ -63,6 +64,11 @@ public class FormulaSyntaxTest {
     @Test
     public void divisionLast() throws ParserException {
         testCalc("=1-6/2", -2);
+    }
+
+    @Test
+    public void brackets() throws ParserException {
+        testCalc("=1-(2-3)", 2);
     }
 
     private static void testParse(String input) throws ParserException {
