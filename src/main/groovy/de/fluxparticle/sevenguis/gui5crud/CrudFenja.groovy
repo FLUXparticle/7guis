@@ -45,7 +45,7 @@ class CrudFenja extends CrudBase {
             vPredicate             =  vPrefix.map { prefix -> { item -> item.startsWith(prefix) } }
             vFullname              =  (vName ** vSurname) { name, surname -> new Name(name, surname) }
 
-            vTreeMapNames          =  constValue(tmvNames);
+            vTreeMapNames          =  constValue(tmvNames)
 
             vTreeMapFilteredNames  =  (vTreeMapNames ** vPredicate) { names, predicate -> names.filterByValue(predicate) }
 

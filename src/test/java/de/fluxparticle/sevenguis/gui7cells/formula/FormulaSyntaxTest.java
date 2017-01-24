@@ -5,6 +5,7 @@ import de.fluxparticle.syntax.config.EnumSyntaxConfig;
 import de.fluxparticle.syntax.lexer.ParserException;
 import de.fluxparticle.syntax.parser.Lexer;
 import de.fluxparticle.syntax.parser.FullParser;
+import de.fluxparticle.syntax.parser.Lexer;
 import de.fluxparticle.syntax.parser.Parser;
 import org.junit.Test;
 
