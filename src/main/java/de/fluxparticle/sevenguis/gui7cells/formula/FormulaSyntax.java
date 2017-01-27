@@ -85,7 +85,7 @@ public enum FormulaSyntax implements Rule {
         return left;
     }
 
-    @SuppressWarnings("unchecked cast")
+    @SuppressWarnings("unchecked")
     private static String join(Object o) {
         return ((List<String>) o).stream().collect(joining());
     }
