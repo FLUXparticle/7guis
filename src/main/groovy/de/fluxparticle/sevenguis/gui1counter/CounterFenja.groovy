@@ -1,7 +1,7 @@
 package de.fluxparticle.sevenguis.gui1counter
 
-import javafx.event.ActionEvent;
 import de.fluxparticle.fenja.FenjaBuilder
+import javafx.event.ActionEvent
 
 import static de.fluxparticle.fenja.EventStream.streamOf
 
@@ -17,7 +17,8 @@ class CounterFenja extends CounterBase {
 
             // -----
 
-            vCount = sClick.accum(0) { _, s -> s + 1 }
+            sNextCount = sClick.snapshot(vCount).map { count -> count + 1 }
+            vCount = sNextCount.hold(0)
 
             // -----
 
