@@ -8,7 +8,7 @@ import static de.fluxparticle.fenja.EventStream.streamOf
 /**
  * Created by sreinck on 15.06.16.
  */
-class CounterFenja extends CounterBase {
+class CounterGroovy extends CounterBase {
 
     @Override
     protected void bind() {
@@ -27,7 +27,7 @@ class CounterFenja extends CounterBase {
     }
 
     static void main(String... args) {
-        launch(CounterFenja.class, args)
+        launch(CounterGroovy.class, args)
     }
 
 }

@@ -15,7 +15,7 @@ import static java.util.Arrays.asList
 /**
  * Created by sreinck on 16.06.16.
  */
-class CrudFenja extends CrudBase {
+class CrudGroovy extends CrudBase {
 
     private static <T> Map<Integer, T> mapOf(T... values) {
         Map<Integer, T> map = new HashMap<>();
@@ -69,7 +69,7 @@ class CrudFenja extends CrudBase {
     }
 
     static void main(String... args) {
-        launch(CrudFenja.class, args)
+        launch(CrudGroovy.class, args)
     }
 
 }

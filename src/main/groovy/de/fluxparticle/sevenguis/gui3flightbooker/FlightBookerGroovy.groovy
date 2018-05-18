@@ -3,12 +3,12 @@ package de.fluxparticle.sevenguis.gui3flightbooker
 import de.fluxparticle.fenja.FenjaBuilder
 
 import static de.fluxparticle.fenja.Value.valueOf
-import static de.fluxparticle.sevenguis.gui3flightbooker.FlightBookerBase.FlightType.*
+import static de.fluxparticle.sevenguis.gui3flightbooker.FlightBookerBase.FlightType.ONE_WAY_FLIGHT
 
 /**
  * Created by sreinck on 16.06.16.
  */
-class FlightBookerFenja extends FlightBookerBase {
+class FlightBookerGroovy extends FlightBookerBase {
 
     @Override
     protected void bind() {
@@ -41,7 +41,7 @@ class FlightBookerFenja extends FlightBookerBase {
     }
 
     static void main(String... args) {
-        launch(FlightBookerFenja.class, args)
+        launch(FlightBookerGroovy.class, args)
     }
 
 }

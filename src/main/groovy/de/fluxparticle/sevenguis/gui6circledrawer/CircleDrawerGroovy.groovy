@@ -21,7 +21,7 @@ import static java.util.Comparator.naturalOrder
 /**
  * Created by sreinck on 20.06.16.
  */
-class CircleDrawerFenja extends CircleDrawerBase {
+class CircleDrawerGroovy extends CircleDrawerBase {
 
     private static def EMPTY = ARedBlackTreeMap.empty(naturalOrder())
 
@@ -200,7 +200,7 @@ class CircleDrawerFenja extends CircleDrawerBase {
     }
 
     public static void main(String... args) {
-        launch(CircleDrawerFenja, args)
+        launch(CircleDrawerGroovy, args)
     }
 
 }

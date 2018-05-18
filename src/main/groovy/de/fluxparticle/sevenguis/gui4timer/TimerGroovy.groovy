@@ -11,7 +11,7 @@ import static de.fluxparticle.fenja.Value.valueOf
 /**
  * Created by sreinck on 15.06.16.
  */
-class TimerFenja extends TimerBase {
+class TimerGroovy extends TimerBase {
 
     private static final Duration DURATION = Duration.millis(100);
 
@@ -41,7 +41,7 @@ class TimerFenja extends TimerBase {
     }
 
     static void main(String... args) {
-        launch(TimerFenja.class, args)
+        launch(TimerGroovy.class, args)
     }
 
 }

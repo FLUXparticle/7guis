@@ -7,7 +7,7 @@ import static de.fluxparticle.fenja.Value.valueOfSilent
 /**
  * Created by sreinck on 15.06.16.
  */
-class TemperatureConverterFenja extends TemperatureConverterBase {
+class TemperatureConverterGroovy extends TemperatureConverterBase {
 
     @Override
     protected void bind() {
@@ -33,7 +33,7 @@ class TemperatureConverterFenja extends TemperatureConverterBase {
     }
 
     static void main(String... args) {
-        launch(TemperatureConverterFenja.class, args)
+        launch(TemperatureConverterGroovy.class, args)
     }
 
 }

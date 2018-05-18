@@ -1,6 +1,5 @@
 package de.fluxparticle.sevenguis.gui0diamond
 
-import de.fluxparticle.fenja.EventStream
 import de.fluxparticle.fenja.FenjaBuilder
 import javafx.event.ActionEvent
 
@@ -9,7 +8,7 @@ import static de.fluxparticle.fenja.EventStream.streamOf
 /**
  * Created by sreinck on 16.06.16.
  */
-class DiamondFenja extends DiamondBase {
+class DiamondGroovy extends DiamondBase {
 
     @Override
     protected void bind() {
@@ -35,7 +34,7 @@ class DiamondFenja extends DiamondBase {
     }
 
     static void main(String... args) {
-        launch(DiamondFenja.class, args)
+        launch(DiamondGroovy.class, args)
     }
 
 }
