@@ -3,6 +3,7 @@ package de.fluxparticle.sevenguis.gui3flightbooker;
 import org.reactfx.EventStream;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import static org.reactfx.EventStreams.combine;
 import static org.reactfx.EventStreams.valuesOf;
@@ -19,12 +20,12 @@ public class FlightBookerReactFX extends FlightBookerBase {
         EventStream<Boolean> oneWay = vFlightType.map(v -> v == FlightType.ONE_WAY_FLIGHT);
 
         EventStream<LocalDate> startDateDate = vStartDate
-                .map(txt -> isDateString(txt) ? stringToDate(txt) : null);
+                .map(FlightBookerBase::stringToDate);
         EventStream<LocalDate> returnDateDate = vReturnDate
-                .map(txt -> isDateString(txt) ? stringToDate(txt) : null);
+                .map(FlightBookerBase::stringToDate);
 
-        EventStream<Boolean> startDateValid = startDateDate.map(v -> v != null);
-        EventStream<Boolean> returnDateValid = returnDateDate.map(v -> v != null);
+        EventStream<Boolean> startDateValid = startDateDate.map(Objects::nonNull);
+        EventStream<Boolean> returnDateValid = returnDateDate.map(Objects::nonNull);
 
         EventStream<Boolean> dateRangeValid = combine(startDateDate, returnDateDate)
                 .map((s, r) -> s != null && r != null && s.compareTo(r) <= 0);

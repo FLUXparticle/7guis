@@ -21,8 +21,8 @@ class FlightBookerGroovy extends FlightBookerBase {
             
             vOneWay             =  vFlightType.map { v -> v == ONE_WAY_FLIGHT }
 
-            vStartDateAsDate    =  vStartDate.map { txt -> isDateString(txt) ? stringToDate(txt) : null }
-            vReturnDateAsDate   =  vReturnDate.map { txt -> isDateString(txt) ? stringToDate(txt) : null }
+            vStartDateAsDate    =  vStartDate.map { txt -> stringToDate(txt) }
+            vReturnDateAsDate   =  vReturnDate.map { txt -> stringToDate(txt) }
 
             vStartDateIsValid   =  vStartDateAsDate.map { v -> v != null }
             vReturnDateIsValid  =  vReturnDateAsDate.map { v -> v != null }

@@ -26,18 +26,12 @@ public abstract class FlightBookerBase extends Application {
     }
 
     protected static LocalDate stringToDate(String string) {
-        return LocalDate.from(FORMAT.parse(string));
-    }
-
-    protected static boolean isDateString(String string) {
         try {
-            FORMAT.parse(string);
-            return true;
+            return LocalDate.from(FORMAT.parse(string));
         } catch (DateTimeParseException e) {
-            return false;
+            return null;
         }
     }
-
 
     protected enum FlightType {
 

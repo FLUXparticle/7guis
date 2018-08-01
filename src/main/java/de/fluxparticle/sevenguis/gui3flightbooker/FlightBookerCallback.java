@@ -2,30 +2,32 @@ package de.fluxparticle.sevenguis.gui3flightbooker;
 
 import javafx.beans.value.ChangeListener;
 
+import java.time.LocalDate;
+
 public class FlightBookerCallback extends FlightBookerBase {
 
     protected void bind() {
+        // This value must be reinitialized so all callback will be called
         flightType.setValue(null);
 
-        // A lot of inversion of control but in parts even terser than the "right" solution.
         flightType.valueProperty().addListener((v, o, n) ->
                 returnDate.setDisable(n == FlightType.ONE_WAY_FLIGHT)
         );
         startDate.textProperty().addListener((v, o, n) ->
-                startDate.setStyle(isDateString(n) ? STYLE_NORMAL : STYLE_ERROR)
+                startDate.setStyle((stringToDate(n) != null) ? STYLE_NORMAL : STYLE_ERROR)
         );
         returnDate.textProperty().addListener((v, o, n) ->
-            returnDate.setStyle(isDateString(n) ? STYLE_NORMAL : STYLE_ERROR)
+            returnDate.setStyle((stringToDate(n) != null) ? STYLE_NORMAL : STYLE_ERROR)
         );
 
         ChangeListener<Object> bookEnabledAction = (v, o, n) -> {
+            LocalDate localStartDate = stringToDate(startDate.getText());
             if (flightType.getValue() == FlightType.ONE_WAY_FLIGHT) {
-                book.setDisable(!isDateString(startDate.getText()));
+                book.setDisable(localStartDate == null);
             } else {
-                book.setDisable(
-                        !isDateString(startDate.getText()) ||
-                        !isDateString(returnDate.getText()) ||
-                        stringToDate(startDate.getText()).compareTo(stringToDate(returnDate.getText())) > 0);
+                LocalDate localReturnDate = stringToDate(returnDate.getText());
+                book.setDisable(localStartDate == null || localReturnDate == null || localStartDate.compareTo(localReturnDate) > 0
+                );
             }
         };
         flightType.valueProperty().addListener(bookEnabledAction);
