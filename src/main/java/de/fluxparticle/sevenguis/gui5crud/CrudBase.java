@@ -4,14 +4,15 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-
-import java.util.Arrays;
-import java.util.List;
 
 public abstract class CrudBase extends Application {
 
@@ -37,7 +38,7 @@ public abstract class CrudBase extends Application {
 
     public final void start(Stage stage) {
         tfPrefix = new TextField();
-        tfPrefix.setPrefWidth(60);
+        tfPrefix.setPrefWidth(250);
         tfName = new TextField();
         tfName.setPrefWidth(100);
         tfSurname = new TextField();
@@ -45,8 +46,6 @@ public abstract class CrudBase extends Application {
         btCreate = new Button("Create");
         btUpdate = new Button("Update");
         btDelete = new Button("Delete");
-        btUpdate.setDisable(true);
-        btDelete.setDisable(true);
         lvEntries = new ListView<>();
         lvEntries.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
