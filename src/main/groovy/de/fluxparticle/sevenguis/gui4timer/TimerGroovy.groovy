@@ -2,28 +2,24 @@ package de.fluxparticle.sevenguis.gui4timer
 
 import de.fluxparticle.fenja.FenjaBuilder
 import javafx.event.ActionEvent
-import javafx.util.Duration
 
 import static de.fluxparticle.fenja.EventStream.streamOf
 import static de.fluxparticle.fenja.EventStream.ticker
 import static de.fluxparticle.fenja.Value.valueOf
-
 /**
  * Created by sreinck on 15.06.16.
  */
 class TimerGroovy extends TimerBase {
 
-    private static final Duration DURATION = Duration.millis(100);
-
     @Override
     protected void bind() {
         new FenjaBuilder().build {
+            sTicker  =  ticker(DURATION)
             vSlider  =  valueOf(sSlider.valueProperty())
             sReset   =  streamOf(btReset, ActionEvent.ACTION)
 
             // -----
 
-            sTicker        =  ticker(DURATION)
             sTicks         =  sTicker.filter { vTicking }
 
             sResetElapsed  =  sReset.map { 0.0 }

@@ -31,7 +31,7 @@ class CounterKotlin : CounterBase() {
 
         sNextCount = (sClick snapshot vCount) { _, count -> count + 1 }
         vCount = sNextCount hold 0
-        vCountStr = vCount { it.toString() }
+        vCountStr = vCount map { it.toString() }
 
         // -----
 

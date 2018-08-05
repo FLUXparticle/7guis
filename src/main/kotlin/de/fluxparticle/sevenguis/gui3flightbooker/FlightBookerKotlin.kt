@@ -3,7 +3,6 @@ package de.fluxparticle.sevenguis.gui3flightbooker
 import de.fluxparticle.fenja.FenjaSystem
 import de.fluxparticle.fenja.expr.*
 import de.fluxparticle.fenja.logger.PrintFenjaSystemLogger
-import de.fluxparticle.sevenguis.gui1counter.CounterBase
 import java.time.LocalDate
 
 /**
@@ -42,20 +41,20 @@ class FlightBookerKotlin : FlightBookerBase() {
 
         // -----
 
-        vOneWay             =  vFlightType { v -> v == FlightType.ONE_WAY_FLIGHT }
+        vOneWay             =  vFlightType map { v -> v == FlightType.ONE_WAY_FLIGHT }
 
-        vStartDateAsDate    =  vStartDate { stringToDate(it) }
-        vReturnDateAsDate   =  vReturnDate { stringToDate(it) }
+        vStartDateAsDate    =  vStartDate map { stringToDate(it) }
+        vReturnDateAsDate   =  vReturnDate map { stringToDate(it) }
 
-        vStartDateIsValid   =  vStartDateAsDate { v -> v != null }
-        vReturnDateIsValid  =  vReturnDateAsDate { v -> v != null }
+        vStartDateIsValid   =  vStartDateAsDate map { v -> v != null }
+        vReturnDateIsValid  =  vReturnDateAsDate map { v -> v != null }
 
-        vDateRangeIsValid   =  (vStartDateAsDate..vReturnDateAsDate) { s, r -> s != null && r != null && s <= r }
+        vDateRangeIsValid   =  (vStartDateAsDate combine vReturnDateAsDate) { s, r -> s != null && r != null && s <= r }
 
         vDatesValid         =  (vOneWay and vStartDateIsValid) or vDateRangeIsValid
 
-        vStartDateStyle     =  vStartDateIsValid { style(it) }
-        vReturnDateStyle    =  vReturnDateIsValid { style(it) }
+        vStartDateStyle     =  vStartDateIsValid map { style(it) }
+        vReturnDateStyle    =  vReturnDateIsValid map { style(it) }
         vDisableButton      =  !vDatesValid
 
         // -----
@@ -74,7 +73,7 @@ class FlightBookerKotlin : FlightBookerBase() {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            CounterBase.launch(FlightBookerKotlin::class.java, *args)
+            launch(FlightBookerKotlin::class.java, *args)
         }
 
     }
