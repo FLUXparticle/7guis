@@ -2,6 +2,7 @@ package de.fluxparticle.sevenguis.gui3flightbooker
 
 import de.fluxparticle.fenja.FenjaSystem
 import de.fluxparticle.fenja.expr.*
+import de.fluxparticle.fenja.logger.PrintFenjaSystemLogger
 import de.fluxparticle.sevenguis.gui1counter.CounterBase
 import java.time.LocalDate
 
@@ -10,7 +11,7 @@ import java.time.LocalDate
  */
 class FlightBookerKotlin : FlightBookerBase() {
 
-    private val system = FenjaSystem()
+    private val system = FenjaSystem(PrintFenjaSystemLogger(System.out))
 
     private val vFlightType: InputExpr<FlightType> by system.InputExprDelegate()
     private val vStartDate: InputExpr<String> by system.InputExprDelegate()
