@@ -1,5 +1,11 @@
 package de.fluxparticle.sevenguis.gui2temperature
 
+import de.fluxparticle.fenja.FenjaSystem
+import de.fluxparticle.fenja.logger.PrintFenjaSystemLogger
+import de.fluxparticle.fenja.stream.EventStream
+import de.fluxparticle.fenja.stream.EventStreamSource
+import de.fluxparticle.fenja.stream.bind
+import de.fluxparticle.fenja.stream.mapNotNull
 import de.fluxparticle.sevenguis.gui1counter.CounterBase
 
 /**
@@ -7,38 +13,31 @@ import de.fluxparticle.sevenguis.gui1counter.CounterBase
  */
 class TemperatureConverterKotlin : TemperatureConverterBase() {
 
-/*
-    private var sCelsiusInput: EventStream<Number> by eventStream()
+    private val system = FenjaSystem(PrintFenjaSystemLogger(System.out))
 
-    private var sFahrenheitInput: EventStream<Number> by eventStream()
+    private val sCelsiusInput: EventStreamSource<Number?> by system.EventStreamSourceDelegate()
 
-    private var sFahrenheitOutput: EventStream<Number> by eventStream()
+    private val sFahrenheitInput: EventStreamSource<Number?> by system.EventStreamSourceDelegate()
 
-    private var sCelsiusOutput: EventStream<Number> by eventStream()
-*/
+    private var sFahrenheitOutput: EventStream<Number?> by system.EventStreamRelayDelegate()
+
+    private var sCelsiusOutput: EventStream<Number?> by system.EventStreamRelayDelegate()
 
     override fun bind() {
-/*
-        Transaction.runVoid {
-            sCelsiusInput     =  valueOfSilent(pCelsius).values()
-            sFahrenheitInput  =  valueOfSilent(pFahrenheit).values()
+        sCelsiusInput     bind  pCelsius
+        sFahrenheitInput  bind  pFahrenheit
 
-            // -----
+        // -----
 
-            sFahrenheitOutput = sCelsiusInput
-                    .filter { it != null }
-                    .map { cToF(it.toDouble()) }
+        sFahrenheitOutput = sCelsiusInput mapNotNull { cToF(it.toDouble()) }
+        sCelsiusOutput = sFahrenheitInput mapNotNull { fToC(it.toDouble()) }
 
-            sCelsiusOutput = sFahrenheitInput
-                    .filter { it != null }
-                    .map { fToC(it.toDouble()) }
+        // -----
 
-            // -----
+        pFahrenheit  bind  sFahrenheitOutput
+        pCelsius     bind  sCelsiusOutput
 
-            sFahrenheitOutput.listen(pFahrenheit::setValue)
-            sCelsiusOutput.listen(pCelsius::setValue)
-        }
-*/
+        system.finish()
     }
 
     companion object {

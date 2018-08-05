@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 import java.text.NumberFormat;
-import java.text.ParseException;
+import java.text.ParsePosition;
 
 public abstract class TemperatureConverterBase extends Application {
 
@@ -27,10 +27,12 @@ public abstract class TemperatureConverterBase extends Application {
 
         @Override
         public Number fromString(String string) {
-            try {
-                return FORMAT.parse(string);
-            } catch (ParseException e) {
+            ParsePosition position = new ParsePosition(0);
+            Number number = FORMAT.parse(string, position);
+            if (position.getIndex() < string.length()) {
                 return null;
+            } else {
+                return number;
             }
         }
     };
