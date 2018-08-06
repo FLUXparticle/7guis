@@ -7,6 +7,7 @@ import de.fluxparticle.fenja.operation.ListOperation
 import de.fluxparticle.fenja.stream.EventStream
 import de.fluxparticle.fenja.stream.EventStreamSource
 import de.fluxparticle.fenja.stream.bind
+import javafx.collections.ListChangeListener
 import javafx.event.ActionEvent
 
 /**
@@ -30,6 +31,8 @@ class CrudKotlin : CrudBase() {
 
     private var sChanges: EventStream<ListOperation<Name>> by system.EventStreamRelayDelegate()
 
+    private val vPrefix: InputExpr<String> by system.InputExprDelegate()
+
     private val vName: InputExpr<String> by system.InputExprDelegate()
 
     private val vSurname: InputExpr<String> by system.InputExprDelegate()
@@ -40,21 +43,31 @@ class CrudKotlin : CrudBase() {
 
     private var vlNames: Expr<List<Name>> by system.OutputExprDelegate()
 
-    private var vDebug: Expr<String> by system.OutputExprDelegate()
+    private var vlFilterNames: Expr<List<Name>> by system.OutputExprDelegate()
+
+    private var vPredicate: Expr<(Name) -> Boolean> by system.OutputExprDelegate()
 
     private var vDisableEdit: Expr<Boolean> by system.OutputExprDelegate()
 
     override fun bind() {
+        tfPrefix.text = "P"
+
         sClickCreate.bind(btCreate, ActionEvent.ACTION)
         sClickUpdate.bind(btUpdate, ActionEvent.ACTION)
         sClickDelete.bind(btDelete, ActionEvent.ACTION)
+
+        vPrefix         bind  tfPrefix.textProperty()
         vName           bind  tfName.textProperty()
         vSurname        bind  tfSurname.textProperty()
-        vSelectedIndex  bind lvEntries.selectionModel.selectedIndexProperty()
+        vSelectedIndex  bind  lvEntries.selectionModel.selectedIndexProperty()
 
         // -----
 
         vlNames         =  sChanges hold emptyList()
+
+        vPredicate      =  vPrefix map { prefix -> { name: Name -> name.startsWith(prefix) } }
+
+        vlFilterNames   =  vlNames filter vPredicate
 
         vFullName       =  (vName combine vSurname) { name, surname -> Name(name, surname) }
 
@@ -64,16 +77,25 @@ class CrudKotlin : CrudBase() {
 
         sChanges        =  sChangeCreate orElse sChangeUpdate orElse sChangeDelete
 
-        vDebug          =  vlNames map { it.toString() }
-
         vDisableEdit    =  vSelectedIndex.map { n -> n.toInt() < 0 }
 
         // -----
 
-        lvEntries.items             bind  vlNames
-        tfPrefix.textProperty()     bind  vDebug
+        lvEntries.items             bind  vlFilterNames
         btUpdate.disableProperty()  bind  vDisableEdit
         btDelete.disableProperty()  bind  vDisableEdit
+
+        lvEntries.items.addListener(ListChangeListener<Name> { c ->
+            while (c.next()) {
+                when {
+                    c.wasPermutated() -> println("permutated ${c.to - c.from} at ${c.from}")
+                    c.wasUpdated()    -> println("updated ${c.to - c.from} at ${c.from}")
+                    c.wasReplaced()   -> println("replaced ${c.to - c.from} at ${c.from}")
+                    c.wasAdded()      -> println("added ${c.to - c.from} at ${c.from}")
+                    c.wasRemoved()    -> println("removed ${c.removedSize} at ${c.from}")
+                }
+            }
+        })
 
         system.finish()
     }
