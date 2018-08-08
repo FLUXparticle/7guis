@@ -1,12 +1,12 @@
 package de.fluxparticle.sevenguis.gui4timer
 
 import de.fluxparticle.fenja.FenjaSystem
-import de.fluxparticle.fenja.expr.Expr
 import de.fluxparticle.fenja.expr.InputExpr
+import de.fluxparticle.fenja.expr.UpdateExpr
 import de.fluxparticle.fenja.expr.bind
 import de.fluxparticle.fenja.logger.PrintFenjaSystemLogger
-import de.fluxparticle.fenja.stream.EventStream
-import de.fluxparticle.fenja.stream.EventStreamSource
+import de.fluxparticle.fenja.stream.InputEventStream
+import de.fluxparticle.fenja.stream.UpdateEventStream
 import de.fluxparticle.fenja.stream.bind
 import de.fluxparticle.fenja.stream.ticker
 import javafx.event.ActionEvent
@@ -18,25 +18,25 @@ class TimerKotlin : TimerBase() {
 
     private val system = FenjaSystem(PrintFenjaSystemLogger(System.out))
 
-    private val sTicker: EventStreamSource<Unit> by system.EventStreamSourceDelegate()
+    private val sTicker:       InputEventStream<Unit>        by system.InputEventStreamDelegate()
 
-    private val vSlider: InputExpr<Number> by system.InputExprDelegate()
+    private val vSlider:       InputExpr<Number>             by system.InputExprDelegate()
 
-    private val sReset: EventStreamSource<ActionEvent> by system.EventStreamSourceDelegate()
+    private val sReset:        InputEventStream<ActionEvent> by system.InputEventStreamDelegate()
 
-    private var sTicks: EventStream<Unit> by system.EventStreamRelayDelegate()
+    private var sTicks:        UpdateEventStream<Unit>       by system.UpdateEventStreamDelegate()
 
-    private var sResetElapsed: EventStream<Double> by system.EventStreamRelayDelegate()
+    private var sResetElapsed: UpdateEventStream<Double>     by system.UpdateEventStreamDelegate()
 
-    private var sTickElapsed: EventStream<Double> by system.EventStreamRelayDelegate()
+    private var sTickElapsed:  UpdateEventStream<Double>     by system.UpdateEventStreamDelegate()
 
-    private var vElapsed: Expr<Double> by system.OutputExprDelegate()
+    private var vElapsed:      UpdateExpr<Double>            by system.UpdateExprDelegate()
 
-    private var vTicking: Expr<Boolean> by system.OutputExprDelegate()
+    private var vTicking:      UpdateExpr<Boolean>           by system.UpdateExprDelegate()
 
-    private var vElapsedStr: Expr<String> by system.OutputExprDelegate()
+    private var vElapsedStr:   UpdateExpr<String>            by system.UpdateExprDelegate()
 
-    private var vProgress: Expr<Number> by system.OutputExprDelegate()
+    private var vProgress:     UpdateExpr<Number>            by system.UpdateExprDelegate()
 
     override fun bind() {
         sTicker  ticker  DURATION
@@ -45,10 +45,10 @@ class TimerKotlin : TimerBase() {
 
         // -----
 
-        sTicks         =  sTicker gate vTicking
+        sTicks         =  sTicker filter { vTicking.sample() }
 
         sResetElapsed  =  sReset map { 0.0 }
-        sTickElapsed   =  (sTicks snapshot vElapsed) { _, elapsed -> elapsed + DURATION.toSeconds() }
+        sTickElapsed   =  sTicks map { _ -> vElapsed.sample() + DURATION.toSeconds() }
 
         vElapsed       =  (sResetElapsed orElse sTickElapsed).hold(0.0)
 

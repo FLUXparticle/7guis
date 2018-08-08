@@ -16,23 +16,23 @@ class FlightBookerKotlin : FlightBookerBase() {
     private val vStartDate: InputExpr<String> by system.InputExprDelegate()
     private val vReturnDate: InputExpr<String> by system.InputExprDelegate()
 
-    private var vOneWay: Expr<Boolean> by system.OutputExprDelegate()
+    private var vOneWay: UpdateExpr<Boolean> by system.UpdateExprDelegate()
 
-    private var vStartDateAsDate: Expr<LocalDate?> by system.OutputExprDelegate()
-    private var vReturnDateAsDate: Expr<LocalDate?> by system.OutputExprDelegate()
+    private var vStartDateAsDate: UpdateExpr<LocalDate?> by system.UpdateExprDelegate()
+    private var vReturnDateAsDate: UpdateExpr<LocalDate?> by system.UpdateExprDelegate()
 
-    private var vStartDateIsValid: Expr<Boolean> by system.OutputExprDelegate()
-    private var vReturnDateIsValid: Expr<Boolean> by system.OutputExprDelegate()
+    private var vStartDateIsValid: UpdateExpr<Boolean> by system.UpdateExprDelegate()
+    private var vReturnDateIsValid: UpdateExpr<Boolean> by system.UpdateExprDelegate()
 
-    private var vDateRangeIsValid: Expr<Boolean> by system.OutputExprDelegate()
+    private var vDateRangeIsValid: UpdateExpr<Boolean> by system.UpdateExprDelegate()
 
-    private var vDatesValid: Expr<Boolean> by system.OutputExprDelegate()
+    private var vDatesValid: UpdateExpr<Boolean> by system.UpdateExprDelegate()
 
-    private var vStartDateStyle: Expr<String> by system.OutputExprDelegate()
+    private var vStartDateStyle: UpdateExpr<String> by system.UpdateExprDelegate()
 
-    private var vReturnDateStyle: Expr<String> by system.OutputExprDelegate()
+    private var vReturnDateStyle: UpdateExpr<String> by system.UpdateExprDelegate()
 
-    private var vDisableButton: Expr<Boolean> by system.OutputExprDelegate()
+    private var vDisableButton: UpdateExpr<Boolean> by system.UpdateExprDelegate()
 
     override fun bind() {
         vFlightType  bind  flightType.valueProperty()

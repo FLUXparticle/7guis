@@ -2,8 +2,8 @@ package de.fluxparticle.sevenguis.gui2temperature
 
 import de.fluxparticle.fenja.FenjaSystem
 import de.fluxparticle.fenja.logger.PrintFenjaSystemLogger
-import de.fluxparticle.fenja.stream.EventStream
-import de.fluxparticle.fenja.stream.EventStreamSource
+import de.fluxparticle.fenja.stream.InputEventStream
+import de.fluxparticle.fenja.stream.UpdateEventStream
 import de.fluxparticle.fenja.stream.bind
 import de.fluxparticle.fenja.stream.mapNotNull
 import de.fluxparticle.sevenguis.gui1counter.CounterBase
@@ -15,13 +15,13 @@ class TemperatureConverterKotlin : TemperatureConverterBase() {
 
     private val system = FenjaSystem(PrintFenjaSystemLogger(System.out))
 
-    private val sCelsiusInput: EventStreamSource<Number?> by system.EventStreamSourceDelegate()
+    private val sCelsiusInput: InputEventStream<Number?> by system.InputEventStreamDelegate()
 
-    private val sFahrenheitInput: EventStreamSource<Number?> by system.EventStreamSourceDelegate()
+    private val sFahrenheitInput: InputEventStream<Number?> by system.InputEventStreamDelegate()
 
-    private var sFahrenheitOutput: EventStream<Number?> by system.EventStreamRelayDelegate()
+    private var sFahrenheitOutput: UpdateEventStream<Number?> by system.UpdateEventStreamDelegate()
 
-    private var sCelsiusOutput: EventStream<Number?> by system.EventStreamRelayDelegate()
+    private var sCelsiusOutput: UpdateEventStream<Number?> by system.UpdateEventStreamDelegate()
 
     override fun bind() {
         sCelsiusInput     bind  pCelsius

@@ -1,11 +1,11 @@
 package de.fluxparticle.sevenguis.gui1counter
 
 import de.fluxparticle.fenja.FenjaSystem
-import de.fluxparticle.fenja.expr.Expr
+import de.fluxparticle.fenja.expr.UpdateExpr
 import de.fluxparticle.fenja.expr.bind
 import de.fluxparticle.fenja.logger.PrintFenjaSystemLogger
-import de.fluxparticle.fenja.stream.EventStream
-import de.fluxparticle.fenja.stream.EventStreamSource
+import de.fluxparticle.fenja.stream.InputEventStream
+import de.fluxparticle.fenja.stream.UpdateEventStream
 import de.fluxparticle.fenja.stream.bind
 import javafx.event.ActionEvent
 
@@ -16,22 +16,22 @@ class CounterKotlin : CounterBase() {
 
     private val system = FenjaSystem(PrintFenjaSystemLogger(System.out))
 
-    private val sClick: EventStreamSource<ActionEvent> by system.EventStreamSourceDelegate()
+    private val sClick: InputEventStream<ActionEvent> by system.InputEventStreamDelegate()
 
-    private var sNextCount: EventStream<Int> by system.EventStreamRelayDelegate()
+    private var sNextCount: UpdateEventStream<Int> by system.UpdateEventStreamDelegate()
 
-    private var vCount: Expr<Int> by system.OutputExprDelegate()
+    private var vCount: UpdateExpr<Int> by system.UpdateExprDelegate()
 
-    private var vCountStr: Expr<String> by system.OutputExprDelegate()
+    private var vCountStr: UpdateExpr<String> by system.UpdateExprDelegate()
 
     override fun bind() {
         sClick.bind(btCountUp, ActionEvent.ACTION)
 
         // -----
 
-        sNextCount = (sClick snapshot vCount) { _, count -> count + 1 }
-        vCount = sNextCount hold 0
-        vCountStr = vCount map { it.toString() }
+        sNextCount  =  sClick map { _ -> vCount.sample() + 1 }
+        vCount      =  sNextCount hold 0
+        vCountStr   =  vCount map { it.toString() }
 
         // -----
 

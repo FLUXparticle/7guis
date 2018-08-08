@@ -4,8 +4,8 @@ import de.fluxparticle.fenja.FenjaSystem
 import de.fluxparticle.fenja.expr.*
 import de.fluxparticle.fenja.logger.PrintFenjaSystemLogger
 import de.fluxparticle.fenja.operation.ListOperation
-import de.fluxparticle.fenja.stream.EventStream
-import de.fluxparticle.fenja.stream.EventStreamSource
+import de.fluxparticle.fenja.stream.InputEventStream
+import de.fluxparticle.fenja.stream.UpdateEventStream
 import de.fluxparticle.fenja.stream.bind
 import javafx.collections.ListChangeListener
 import javafx.event.ActionEvent
@@ -17,19 +17,19 @@ class CrudKotlin : CrudBase() {
 
     private val system = FenjaSystem(PrintFenjaSystemLogger(System.out))
 
-    private val sClickCreate: EventStreamSource<ActionEvent> by system.EventStreamSourceDelegate()
+    private val sClickCreate: InputEventStream<ActionEvent> by system.InputEventStreamDelegate()
 
-    private val sClickUpdate: EventStreamSource<ActionEvent> by system.EventStreamSourceDelegate()
+    private val sClickUpdate: InputEventStream<ActionEvent> by system.InputEventStreamDelegate()
 
-    private val sClickDelete: EventStreamSource<ActionEvent> by system.EventStreamSourceDelegate()
+    private val sClickDelete: InputEventStream<ActionEvent> by system.InputEventStreamDelegate()
 
-    private var sChangeCreate: EventStream<ListOperation<Name>> by system.EventStreamRelayDelegate()
+    private var sChangeCreate: UpdateEventStream<ListOperation<Name>> by system.UpdateEventStreamDelegate()
 
-    private var sChangeUpdate: EventStream<ListOperation<Name>> by system.EventStreamRelayDelegate()
+    private var sChangeUpdate: UpdateEventStream<ListOperation<Name>> by system.UpdateEventStreamDelegate()
 
-    private var sChangeDelete: EventStream<ListOperation<Name>> by system.EventStreamRelayDelegate()
+    private var sChangeDelete: UpdateEventStream<ListOperation<Name>> by system.UpdateEventStreamDelegate()
 
-    private var sChanges: EventStream<ListOperation<Name>> by system.EventStreamRelayDelegate()
+    private var sChanges: UpdateEventStream<ListOperation<Name>> by system.UpdateEventStreamDelegate()
 
     private val vPrefix: InputExpr<String> by system.InputExprDelegate()
 
@@ -39,15 +39,17 @@ class CrudKotlin : CrudBase() {
 
     private val vSelectedIndex: InputExpr<Number> by system.InputExprDelegate()
 
-    private var vFullName: Expr<Name> by system.OutputExprDelegate()
+    private var vFullName: UpdateExpr<Name> by system.UpdateExprDelegate()
 
-    private var vlNames: Expr<List<Name>> by system.OutputExprDelegate()
+    private var vlNames: ListExpr<Name> by system.UpdateExprDelegate()
 
-    private var vlFilterNames: Expr<List<Name>> by system.OutputExprDelegate()
+    private var vlFilterNames: ListExpr<Name> by system.UpdateExprDelegate()
 
-    private var vPredicate: Expr<(Name) -> Boolean> by system.OutputExprDelegate()
+    private var vPredicate: UpdateExpr<(Name) -> Boolean> by system.UpdateExprDelegate()
 
-    private var vDisableEdit: Expr<Boolean> by system.OutputExprDelegate()
+    private var vDisableUpdate: UpdateExpr<Boolean> by system.UpdateExprDelegate()
+
+    private var vDisableDelete: UpdateExpr<Boolean> by system.UpdateExprDelegate()
 
     override fun bind() {
         tfPrefix.text = "P"
@@ -63,6 +65,12 @@ class CrudKotlin : CrudBase() {
 
         // -----
 
+        sChangeCreate   =  sClickCreate map { _ -> vlNames.buildAddOperation(vFullName.sample()) }
+        sChangeUpdate   =  sClickUpdate map { _ -> vlNames.buildSetOperation(vSelectedIndex.sample().toInt(), vFullName.sample()) }
+        sChangeDelete   =  sClickDelete map { _ -> vlNames.buildRemoveOperation(vSelectedIndex.sample().toInt()) }
+
+        sChanges        =  sChangeCreate orElse sChangeUpdate orElse sChangeDelete
+
         vlNames         =  sChanges hold emptyList()
 
         vPredicate      =  vPrefix map { prefix -> { name: Name -> name.startsWith(prefix) } }
@@ -71,19 +79,14 @@ class CrudKotlin : CrudBase() {
 
         vFullName       =  (vName combine vSurname) { name, surname -> Name(name, surname) }
 
-        sChangeCreate   =  (sClickCreate snapshot vFullName) { _, name -> vlNames.buildAddOperation(name) }
-        sChangeUpdate   =  (sClickUpdate snapshot vSelectedIndex and vFullName) { _, index, name -> vlNames.buildSetOperation(index.toInt(), name) }
-        sChangeDelete   =  (sClickDelete snapshot vSelectedIndex) { _, index -> vlNames.buildRemoveOperation(index.toInt()) }
-
-        sChanges        =  sChangeCreate orElse sChangeUpdate orElse sChangeDelete
-
-        vDisableEdit    =  vSelectedIndex.map { n -> n.toInt() < 0 }
+        vDisableUpdate  =  vSelectedIndex.map { n -> n.toInt() < 0 }
+        vDisableDelete  =  vSelectedIndex.map { n -> n.toInt() < 0 }
 
         // -----
 
         lvEntries.items             bind  vlFilterNames
-        btUpdate.disableProperty()  bind  vDisableEdit
-        btDelete.disableProperty()  bind  vDisableEdit
+        btUpdate.disableProperty()  bind  vDisableUpdate
+        btDelete.disableProperty()  bind  vDisableDelete
 
         lvEntries.items.addListener(ListChangeListener<Name> { c ->
             while (c.next()) {
