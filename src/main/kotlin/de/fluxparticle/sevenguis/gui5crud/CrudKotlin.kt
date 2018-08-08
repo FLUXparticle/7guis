@@ -29,6 +29,8 @@ class CrudKotlin : CrudBase() {
 
     private var sChangeDelete: UpdateEventStream<ListOperation<Name>> by system.UpdateEventStreamDelegate()
 
+    private var sFilterChanges: UpdateEventStream<ListOperation<Name>> by system.UpdateEventStreamDelegate()
+
     private var sChanges: UpdateEventStream<ListOperation<Name>> by system.UpdateEventStreamDelegate()
 
     private val vPrefix: InputExpr<String> by system.InputExprDelegate()
@@ -43,7 +45,7 @@ class CrudKotlin : CrudBase() {
 
     private var vlNames: ListExpr<Name> by system.UpdateExprDelegate()
 
-    private var vlFilterNames: ListExpr<Name> by system.UpdateExprDelegate()
+    private var vlFilterNames: FilterListExpr<Name> by system.UpdateExprDelegate()
 
     private var vPredicate: UpdateExpr<(Name) -> Boolean> by system.UpdateExprDelegate()
 
@@ -66,10 +68,12 @@ class CrudKotlin : CrudBase() {
         // -----
 
         sChangeCreate   =  sClickCreate map { _ -> vlNames.buildAddOperation(vFullName.sample()) }
-        sChangeUpdate   =  sClickUpdate map { _ -> vlNames.buildSetOperation(vSelectedIndex.sample().toInt(), vFullName.sample()) }
-        sChangeDelete   =  sClickDelete map { _ -> vlNames.buildRemoveOperation(vSelectedIndex.sample().toInt()) }
+        sChangeUpdate   =  sClickUpdate map { _ -> vlFilterNames.buildSetOperation(vSelectedIndex.sample().toInt(), vFullName.sample()) }
+        sChangeDelete   =  sClickDelete map { _ -> vlFilterNames.buildRemoveOperation(vSelectedIndex.sample().toInt()) }
 
-        sChanges        =  sChangeCreate orElse sChangeUpdate orElse sChangeDelete
+        sFilterChanges  =  sChangeUpdate orElse sChangeDelete
+
+        sChanges        =  sChangeCreate orElse (sFilterChanges map { vlFilterNames.reverseTransform(it) })
 
         vlNames         =  sChanges hold emptyList()
 
