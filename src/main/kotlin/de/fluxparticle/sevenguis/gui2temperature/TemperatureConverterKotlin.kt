@@ -2,9 +2,6 @@ package de.fluxparticle.sevenguis.gui2temperature
 
 import de.fluxparticle.fenja.FenjaSystem
 import de.fluxparticle.fenja.logger.PrintFenjaSystemLogger
-import de.fluxparticle.fenja.stream.InputEventStream
-import de.fluxparticle.fenja.stream.UpdateEventStream
-import de.fluxparticle.fenja.stream.bind
 import de.fluxparticle.fenja.stream.mapNotNull
 import de.fluxparticle.sevenguis.gui1counter.CounterBase
 
@@ -13,31 +10,23 @@ import de.fluxparticle.sevenguis.gui1counter.CounterBase
  */
 class TemperatureConverterKotlin : TemperatureConverterBase() {
 
-    private val system = FenjaSystem(PrintFenjaSystemLogger(System.out))
-
-    private val sCelsiusInput: InputEventStream<Number?> by system.InputEventStreamDelegate()
-
-    private val sFahrenheitInput: InputEventStream<Number?> by system.InputEventStreamDelegate()
-
-    private var sFahrenheitOutput: UpdateEventStream<Number?> by system.UpdateEventStreamDelegate()
-
-    private var sCelsiusOutput: UpdateEventStream<Number?> by system.UpdateEventStreamDelegate()
+    private val logger = PrintFenjaSystemLogger(System.out)
 
     override fun bind() {
-        sCelsiusInput     bind  pCelsius
-        sFahrenheitInput  bind  pFahrenheit
+        FenjaSystem.build(logger) {
+            val sCelsiusInput by changesOf(pCelsius)
+            val sFahrenheitInput by changesOf(pFahrenheit)
 
-        // -----
+            // -----
 
-        sFahrenheitOutput = sCelsiusInput mapNotNull { cToF(it.toDouble()) }
-        sCelsiusOutput = sFahrenheitInput mapNotNull { fToC(it.toDouble()) }
+            val sFahrenheitOutput by sCelsiusInput mapNotNull { cToF(it.toDouble()) }
+            val sCelsiusOutput by sFahrenheitInput mapNotNull { fToC(it.toDouble()) }
 
-        // -----
+            // -----
 
-        pFahrenheit  bind  sFahrenheitOutput
-        pCelsius     bind  sCelsiusOutput
-
-        system.finish()
+            pFahrenheit bind sFahrenheitOutput
+            pCelsius bind sCelsiusOutput
+        }
     }
 
     companion object {

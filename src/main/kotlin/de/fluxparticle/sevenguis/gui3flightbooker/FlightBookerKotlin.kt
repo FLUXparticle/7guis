@@ -1,70 +1,45 @@
 package de.fluxparticle.sevenguis.gui3flightbooker
 
 import de.fluxparticle.fenja.FenjaSystem
-import de.fluxparticle.fenja.expr.*
 import de.fluxparticle.fenja.logger.PrintFenjaSystemLogger
-import java.time.LocalDate
 
 /**
  * Created by sreinck on 20.05.18.
  */
 class FlightBookerKotlin : FlightBookerBase() {
 
-    private val system = FenjaSystem(PrintFenjaSystemLogger(System.out))
-
-    private val vFlightType: InputExpr<FlightType> by system.InputExprDelegate()
-    private val vStartDate: InputExpr<String> by system.InputExprDelegate()
-    private val vReturnDate: InputExpr<String> by system.InputExprDelegate()
-
-    private var vOneWay: UpdateExpr<Boolean> by system.UpdateExprDelegate()
-
-    private var vStartDateAsDate: UpdateExpr<LocalDate?> by system.UpdateExprDelegate()
-    private var vReturnDateAsDate: UpdateExpr<LocalDate?> by system.UpdateExprDelegate()
-
-    private var vStartDateIsValid: UpdateExpr<Boolean> by system.UpdateExprDelegate()
-    private var vReturnDateIsValid: UpdateExpr<Boolean> by system.UpdateExprDelegate()
-
-    private var vDateRangeIsValid: UpdateExpr<Boolean> by system.UpdateExprDelegate()
-
-    private var vDatesValid: UpdateExpr<Boolean> by system.UpdateExprDelegate()
-
-    private var vStartDateStyle: UpdateExpr<String> by system.UpdateExprDelegate()
-
-    private var vReturnDateStyle: UpdateExpr<String> by system.UpdateExprDelegate()
-
-    private var vDisableButton: UpdateExpr<Boolean> by system.UpdateExprDelegate()
+    private val logger = PrintFenjaSystemLogger(System.out)
 
     override fun bind() {
-        vFlightType  bind  flightType.valueProperty()
-        vStartDate   bind  startDate.textProperty()
-        vReturnDate  bind  returnDate.textProperty()
+        FenjaSystem.build(logger) {
+            val vFlightType by flightType.valueProperty()
+            val vStartDate by startDate.textProperty()
+            val vReturnDate by returnDate.textProperty()
 
-        // -----
+            // -----
 
-        vOneWay             =  vFlightType map { v -> v == FlightType.ONE_WAY_FLIGHT }
+            val vOneWay by vFlightType map { v -> v == FlightType.ONE_WAY_FLIGHT }
 
-        vStartDateAsDate    =  vStartDate map { stringToDate(it) }
-        vReturnDateAsDate   =  vReturnDate map { stringToDate(it) }
+            val vStartDateAsDate by vStartDate map { stringToDate(it) }
+            val vReturnDateAsDate by vReturnDate map { stringToDate(it) }
 
-        vStartDateIsValid   =  vStartDateAsDate map { v -> v != null }
-        vReturnDateIsValid  =  vReturnDateAsDate map { v -> v != null }
+            val vStartDateIsValid by vStartDateAsDate map { v -> v != null }
+            val vReturnDateIsValid by vReturnDateAsDate map { v -> v != null }
 
-        vDateRangeIsValid   =  (vStartDateAsDate combine vReturnDateAsDate) { s, r -> s != null && r != null && s <= r }
+            val vDateRangeIsValid by (vStartDateAsDate combine vReturnDateAsDate) { s, r -> s != null && r != null && s <= r }
 
-        vDatesValid         =  (vOneWay and vStartDateIsValid) or vDateRangeIsValid
+            val vDatesValid by (vOneWay and vStartDateIsValid) or vDateRangeIsValid
 
-        vStartDateStyle     =  vStartDateIsValid map { style(it) }
-        vReturnDateStyle    =  vReturnDateIsValid map { style(it) }
-        vDisableButton      =  !vDatesValid
+            val vStartDateStyle by vStartDateIsValid map { style(it) }
+            val vReturnDateStyle by vReturnDateIsValid map { style(it) }
 
-        // -----
+            // -----
 
-        returnDate.disableProperty()  bind  vOneWay
-        startDate.styleProperty()     bind  vStartDateStyle
-        returnDate.styleProperty()    bind  vReturnDateStyle
-        book.disableProperty()        bind  vDisableButton
-
-        system.finish()
+            returnDate.disableProperty() bind vOneWay
+            startDate.styleProperty() bind vStartDateStyle
+            returnDate.styleProperty() bind vReturnDateStyle
+            book.disableProperty() bind !vDatesValid
+        }
     }
 
     companion object {
