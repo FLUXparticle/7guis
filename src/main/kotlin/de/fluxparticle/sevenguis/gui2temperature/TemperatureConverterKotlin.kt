@@ -1,6 +1,7 @@
 package de.fluxparticle.sevenguis.gui2temperature
 
 import de.fluxparticle.fenja.FenjaSystem
+import de.fluxparticle.fenja.bind
 import de.fluxparticle.fenja.logger.PrintFenjaSystemLogger
 import de.fluxparticle.fenja.stream.mapNotNull
 import de.fluxparticle.sevenguis.gui1counter.CounterBase
@@ -14,18 +15,18 @@ class TemperatureConverterKotlin : TemperatureConverterBase() {
 
     override fun bind() {
         FenjaSystem.build(logger) {
-            val sCelsiusInput by changesOf(pCelsius)
-            val sFahrenheitInput by changesOf(pFahrenheit)
+            val sCelsiusInput     by  changesOf(pCelsius)
+            val sFahrenheitInput  by  changesOf(pFahrenheit)
 
             // -----
 
-            val sFahrenheitOutput by sCelsiusInput mapNotNull { cToF(it.toDouble()) }
-            val sCelsiusOutput by sFahrenheitInput mapNotNull { fToC(it.toDouble()) }
+            val sFahrenheitOutput  by  sCelsiusInput mapNotNull { cToF(it.toDouble()) }
+            val sCelsiusOutput     by  sFahrenheitInput mapNotNull { fToC(it.toDouble()) }
 
             // -----
 
-            pFahrenheit bind sFahrenheitOutput
-            pCelsius bind sCelsiusOutput
+            pFahrenheit  bind  sFahrenheitOutput
+            pCelsius     bind  sCelsiusOutput
         }
     }
 

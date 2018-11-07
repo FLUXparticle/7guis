@@ -3,6 +3,7 @@ package de.fluxparticle.sevenguis.gui5crud
 import de.fluxparticle.fenja.FenjaSystem.Companion.build
 import de.fluxparticle.fenja.FenjaSystem.FilterListExpr
 import de.fluxparticle.fenja.FenjaSystem.ListExpr
+import de.fluxparticle.fenja.bind
 import de.fluxparticle.fenja.expr.bind
 import de.fluxparticle.fenja.expr.buildAddOperation
 import de.fluxparticle.fenja.expr.buildRemoveOperation
@@ -17,44 +18,6 @@ import javafx.event.ActionEvent.ACTION
 class CrudKotlin : CrudBase() {
 
     private val logger = PrintFenjaSystemLogger(System.out)
-
-/*
-    private val sClickCreate: FenjaSystem.InputEventStream<ActionEvent> by system.InputEventStreamDelegate()
-
-    private val sClickUpdate: FenjaSystem.InputEventStream<ActionEvent> by system.InputEventStreamDelegate()
-
-    private val sClickDelete: FenjaSystem.InputEventStream<ActionEvent> by system.InputEventStreamDelegate()
-
-    private var sChangeCreate: FenjaSystem.UpdateEventStream<ListOperation<Name>> by system.UpdateEventStreamDelegate()
-
-    private var sChangeUpdate: FenjaSystem.UpdateEventStream<ListOperation<Name>> by system.UpdateEventStreamDelegate()
-
-    private var sChangeDelete: FenjaSystem.UpdateEventStream<ListOperation<Name>> by system.UpdateEventStreamDelegate()
-
-    private var sFilterChanges: FenjaSystem.UpdateEventStream<ListOperation<Name>> by system.UpdateEventStreamDelegate()
-
-    private var sChanges: FenjaSystem.UpdateEventStream<ListOperation<Name>> by system.UpdateEventStreamDelegate()
-
-    private val vPrefix: FenjaSystem.InputExpr<String> by system.InputExprDelegate()
-
-    private val vName: InputExpr<String> by system.InputExprDelegate()
-
-    private val vSurname: InputExpr<String> by system.InputExprDelegate()
-
-    private val vSelectedIndex: InputExpr<Number> by system.InputExprDelegate()
-
-    private var vFullName: UpdateExpr<Name> by system.UpdateExprDelegate()
-
-    private var vlNames: FenjaSystem.ListExpr<Name> by system.UpdateExprDelegate()
-
-    private var vlFilterNames: FenjaSystem.FilterListExpr<Name> by system.UpdateExprDelegate()
-
-    private var vPredicate: UpdateExpr<(Name) -> Boolean> by system.UpdateExprDelegate()
-
-    private var vDisableUpdate: UpdateExpr<Boolean> by system.UpdateExprDelegate()
-
-    private var vDisableDelete: UpdateExpr<Boolean> by system.UpdateExprDelegate()
-*/
 
     override fun bind() {
         build(logger) {
